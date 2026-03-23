@@ -1,9 +1,17 @@
 <!doctype html>
 <html lang="es">
-
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  
+  <!-- === PWA INTEGRADA EN UN SOLO ARCHIVO (sin archivos externos) === -->
+  <meta name="theme-color" content="#0a0e1a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Fenix Gold">
+  <link rel="apple-touch-icon" href="https://via.placeholder.com/180x180/00d9ff/070a1a?text=🛡️">
+  <!-- ======================================================== -->
+
   <title>Simulador de Capacitación</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
@@ -20,13 +28,7 @@
       --text-secondary: #94a3b8;
       --border: rgba(255, 255, 255, 0.1);
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 100%);
@@ -34,251 +36,47 @@
       min-height: 100vh;
       overflow-x: hidden;
     }
-
-    .particles {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-    }
-
+    .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
     .particle {
-      position: absolute;
-      width: 2px;
-      height: 2px;
-      background: var(--accent);
-      border-radius: 50%;
-      opacity: 0.3;
-      animation: float 20s infinite;
+      position: absolute; width: 2px; height: 2px; background: var(--accent);
+      border-radius: 50%; opacity: 0.3; animation: float 20s infinite;
     }
-
-    @keyframes float {
-      0%, 100% { transform: translate(0, 0); opacity: 0; }
-      50% { opacity: 0.5; }
-    }
-
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 20px;
-      position: relative;
-      z-index: 1;
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      margin-bottom: 30px;
-      padding: 25px;
-      background: linear-gradient(135deg, var(--bg-card) 0%, rgba(26, 31, 53, 0.6) 100%);
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    }
-
-    .logo {
-      width: 50px;
-      height: 50px;
-      background: linear-gradient(135deg, var(--accent) 0%, #0080ff 100%);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      box-shadow: 0 4px 20px var(--accent-glow);
-    }
-
-    h1 {
-      font-size: 28px;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--accent) 0%, #ffffff 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .subtitle {
-      color: var(--text-secondary);
-      font-size: 14px;
-      margin-top: 5px;
-    }
-
-    .header-actions {
-      margin-left: auto;
-      display: flex;
-      gap: 10px;
-    }
-
-    button {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 10px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    button.primary {
-      background: linear-gradient(135deg, var(--accent) 0%, #0080ff 100%);
-      color: #070a1a;
-      box-shadow: 0 4px 15px var(--accent-glow);
-    }
-
-    button.ghost {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-secondary);
-    }
-
-    .card {
-      background: linear-gradient(135deg, var(--bg-card) 0%, rgba(26, 31, 53, 0.8) 100%);
-      border-radius: 16px;
-      padding: 24px;
-      border: 1px solid var(--border);
-      backdrop-filter: blur(10px);
-    }
-
-    .main-layout {
-      display: grid;
-      grid-template-columns: 1fr 350px;
-      gap: 20px;
-    }
-
-    .area-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
-    }
-
-    .area-card {
-      cursor: pointer;
-      padding: 30px;
-      text-align: center;
-      transition: all 0.3s ease;
-    }
-
+    @keyframes float { 0%, 100% { transform: translate(0, 0); opacity: 0; } 50% { opacity: 0.5; } }
+    .container { max-width: 1400px; margin: 0 auto; padding: 20px; position: relative; z-index: 1; }
+    header { display: flex; align-items: center; gap: 20px; margin-bottom: 30px; padding: 25px; background: linear-gradient(135deg, var(--bg-card) 0%, rgba(26, 31, 53, 0.6) 100%); border-radius: 20px; border: 1px solid var(--border); backdrop-filter: blur(10px); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); }
+    .logo { width: 50px; height: 50px; background: linear-gradient(135deg, var(--accent) 0%, #0080ff 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 20px var(--accent-glow); }
+    h1 { font-size: 28px; font-weight: 700; background: linear-gradient(135deg, var(--accent) 0%, #ffffff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .subtitle { color: var(--text-secondary); font-size: 14px; margin-top: 5px; }
+    .header-actions { margin-left: auto; display: flex; gap: 10px; }
+    button { padding: 10px 20px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+    button.primary { background: linear-gradient(135deg, var(--accent) 0%, #0080ff 100%); color: #070a1a; box-shadow: 0 4px 15px var(--accent-glow); }
+    button.ghost { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); }
+    .card { background: linear-gradient(135deg, var(--bg-card) 0%, rgba(26, 31, 53, 0.8) 100%); border-radius: 16px; padding: 24px; border: 1px solid var(--border); backdrop-filter: blur(10px); }
+    .main-layout { display: grid; grid-template-columns: 1fr 350px; gap: 20px; }
+    .area-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
+    .area-card { cursor: pointer; padding: 30px; text-align: center; transition: all 0.3s ease; }
     .area-card:hover { border-color: var(--accent); }
-
-    .node-content {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 30px;
-      border-radius: 12px;
-      margin-bottom: 25px;
-      border-left: 4px solid var(--accent);
-    }
-
+    .node-content { background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 12px; margin-bottom: 25px; border-left: 4px solid var(--accent); }
     .node-text { font-size: 18px; line-height: 1.6; }
-
     .choices-grid { display: grid; gap: 15px; }
-
-    .choice-btn {
-      padding: 20px;
-      text-align: left;
-      background: var(--bg-card);
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      cursor: pointer;
-      color: white;
-      transition: 0.3s;
-    }
-
+    .choice-btn { padding: 20px; text-align: left; background: var(--bg-card); border: 2px solid var(--border); border-radius: 12px; cursor: pointer; color: white; transition: 0.3s; }
     .choice-btn:hover { border-color: var(--accent); transform: translateX(10px); }
-
     .sidebar { position: sticky; top: 20px; height: fit-content; }
-
-    .user-input {
-      width: 100%;
-      padding: 12px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: white;
-      margin-top: 10px;
-    }
-
-    .dimension-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px;
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 8px;
-      margin-bottom: 8px;
-    }
-
+    .user-input { width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: white; margin-top: 10px; }
+    .dimension-item { display: flex; justify-content: space-between; padding: 12px; background: rgba(255, 255, 255, 0.03); border-radius: 8px; margin-bottom: 8px; }
     .dimension-value { color: var(--accent); font-weight: bold; }
-
-    .progress-bar {
-      width: 100%;
-      height: 12px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 999px;
-      overflow: hidden;
-      margin-top: 10px;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: var(--accent);
-      transition: width 0.5s ease;
-    }
-
-    .face-analysis-module {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      width: 120px;
-      z-index: 10;
-    }
-
-    #face-video {
-      width: 100%;
-      border-radius: 8px;
-      border: 2px solid var(--danger);
-      transform: scaleX(-1);
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.8);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-    }
-
+    .progress-bar { width: 100%; height: 12px; background: rgba(255, 255, 255, 0.05); border-radius: 999px; overflow: hidden; margin-top: 10px; }
+    .progress-fill { height: 100%; background: var(--accent); transition: width 0.5s ease; }
+    .face-analysis-module { position: absolute; top: 20px; right: 20px; width: 120px; z-index: 10; }
+    #face-video { width: 100%; border-radius: 8px; border: 2px solid var(--danger); transform: scaleX(-1); }
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); z-index: 1000; align-items: center; justify-content: center; }
     .modal.active { display: flex; }
-
-    .modal-content {
-      background: var(--bg-card);
-      padding: 30px;
-      border-radius: 16px;
-      max-width: 500px;
-      border: 1px solid var(--border);
-    }
-
-    /* Estilos para el PDF (Oculto en la web) */
-    #pdf-report-template {
-        display: none;
-        padding: 40px;
-        background: white;
-        color: black;
-        font-family: Arial, sans-serif;
-    }
+    .modal-content { background: var(--bg-card); padding: 30px; border-radius: 16px; max-width: 500px; border: 1px solid var(--border); }
+    #pdf-report-template { display: none; padding: 40px; background: white; color: black; font-family: Arial, sans-serif; }
     .pdf-header { border-bottom: 2px solid #00d9ff; padding-bottom: 10px; margin-bottom: 20px; }
     .pdf-item { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
   </style>
 </head>
-
 <body>
   <div class="particles" id="particles"></div>
 
@@ -378,118 +176,132 @@
   </div>
 
   <script>
+    // ==================== ESCENARIOS COMPLETOS (corregidos) ====================
     const scenarios = {
       industrial: [
-        {
-          text: "1. Ante la detección de un incendio activo en el sector de almacenamiento de contenedores, ¿cuál debe ser la primera acción según el protocolo?",
-          choices: [
-            { text: "A) Intentar mover contenedores con maquinaria pesada.", correct: false, feedback: "Error. Riesgo de propagación y atrapamiento." },
-            { text: "B) Dar alarma inmediata, evacuar y notificar a bomberos.", correct: true, feedback: "Correcto. La vida es la prioridad máxima." },
-            { text: "C) Buscar el origen individualmente antes de informar.", correct: false, feedback: "Error. El fuego se propaga en segundos." }
-          ]
-        },
-        {
-          text: "2. En caso de un robo con utilización de armas de fuego, ¿qué conducta prioriza la seguridad?",
-          choices: [
-            { text: "A) Enfrentar a los delincuentes con herramientas.", correct: false, feedback: "Error crítico. Riesgo letal innecesario." },
-            { text: "B) Mantener la calma y seguir instrucciones de asaltantes.", correct: true, feedback: "Correcto. Preservar la vida es el objetivo primordial." },
-            { text: "C) Activar alarmas sonoras con delincuentes presentes.", correct: false, feedback: "Riesgo. Puede generar reacción violenta." }
-          ]
-        },
-        {
-          text: "3. El CCTV detecta una intrusión perimetral nocturna. ¿Cuál es el procedimiento correcto?",
-          choices: [
-            { text: "A) Abandonar el puesto para interceptar al intruso.", correct: false, feedback: "Error. Deja el centro de monitoreo desprotegido." },
-            { text: "B) Informar a supervisor y fuerzas de orden, manteniendo monitoreo.", correct: true, feedback: "Correcto. Coordinación y vigilancia continua." },
-            { text: "C) Esperar a confirmar la intención del intruso.", correct: false, feedback: "Error. La intrusión ya es un incidente." }
-          ]
-        },
-        {
-          text: "4. Ante un accidente grave con resultado de muerte, ¿medida inmediata?",
-          choices: [
-            { text: "A) Trasladar el cuerpo para no afectar la operación.", correct: false, feedback: "Ilegal. Altera la escena del suceso." },
-            { text: "B) Paralizar faenas, aislar el sitio y notificar a Fiscalía/Policía.", correct: true, feedback: "Correcto. Cumplimiento legal y protocolo." },
-            { text: "C) Limpiar el área rápidamente.", correct: false, feedback: "Error grave. Obstrucción a la justicia." }
-          ]
-        },
-        {
-          text: "5. ¿Cuál es el objetivo primordial ante un incendio, robo o accidente fatal?",
-          choices: [
-            { text: "A) Proteger la integridad física de las personas.", correct: true, feedback: "Correcto. Valor supremo de la Empresa." },
-            { text: "B) Asegurar la documentación.", correct: false, feedback: "Incorrecto. Lo material es secundario." },
-            { text: "C) Retomar operaciones rápido.", correct: false, feedback: "Incorrecto. La seguridad manda." }
-            ]
-        },
-        {
-          text: "6. Durante una emergencia quimica, ¿cuál es una de las responsabilidades específicas de los Guardias de Porterías de los Accesos Principales?",
-          choices: [
-            { text: "A) Elaborar el informe de experiencia final junto con el COS.", correct: false, feedback: "Correcto. Valor supremo de la Empresa." },
-            { text: "B) Realizar sobrevuelos para delimitar el área del derrame.", correct: false, feedback: "Incorrecto. Lo material es secundario." },
-            { text: "C) Mantener las vías de salida expeditas para los móviles que acudan a la emergencia.", correct: true, feedback: "Incorrecto. La seguridad manda." }
-             ]
-        },
-        {
-          text: "7. ¿Quién es el encargado de liderar en terreno la aplicación del protocolo de reacción frente a la emergencia?",
-          choices: [
-            { text: "A) El Operador de Drone (R.P.A.).", correct: false, feedback: "Correcto. Valor supremo de la Empresa." },
-            { text: "B) El Supervisor en turno.", correct: true, feedback: "Incorrecto. Lo material es secundario." },
-            { text: "C) El Centralista de turno.", correct: false, feedback: "Incorrecto. La seguridad manda." }
-            ]
-        },
-        {
-          text: "8. Ante la sospecha de que la mochila sea un artefacto explosivo, ¿cuál debe ser la reacción inmediata de quien realiza el hallazgo?",
-          choices: [
-            { text: "A) Abrir la mochila con cuidado para verificar si contiene cables o detonadores.", correct: false, feedback: "Correcto. Valor supremo de la Empresa." },
-            { text: "B) Trasladar el objeto rápidamente a una zona abierta fuera del edificio administrativo.", correct: false, feedback: "Incorrecto. Lo material es secundario." },
-            { text: "C) No manipular, mover ni trasladar el objeto en ninguna circunstancia e informar inmediatamente.", correct: true, feedback: "Incorrecto. La seguridad manda." }
-             ]
-        },
-        {
-          text: "9. Una vez detectado el objeto sospechoso, ¿a quiénes se les debe dar aviso inmediato para activar el protocolo?",
-          choices: [
-            { text: "A) Exclusivamente a Carabineros de Chile antes de informar internamente.", correct: false, feedback: "Correcto. Valor supremo de la Empresa." },
-            { text: "B) Al Supervisor de Seguridad, al Administrador de Contratos de Securitas y al jefe de Turno.", correct: true, feedback: "Incorrecto. Lo material es secundario." },
-            { text: "C) Únicamente a los empleados de la gerencia para que comiencen a salir por su cuenta.", correct: false, feedback: "Incorrecto. La seguridad manda." }
-            ]
-        },
-        {
-          text: "10. ¿Cuál es una de las acciones preventivas y de control que debe ejecutarse en el sitio del hallazgo mientras llega el personal especializado?",
-          choices: [
-            { text: "A) Intentar neutralizar el artefacto utilizando conocimientos básicos de seguridad.", correct: false, feedback: "Correcto. Valor supremo de la Empresa." },
-            { text: "B) Desbloquear todas las puertas, incluso las que no son vías de escape, para ventilar.", correct: false, feedback: "Incorrecto. Lo material es secundario." },
-            { text: "C) Restringir el acceso al área y establecer un anillo de seguridad alrededor del objeto.", correct: true, feedback: "Incorrecto. La seguridad manda." }
-          ]
-          ]
-        }
+        { text: "1. Ante la detección de un incendio activo en el sector de almacenamiento de contenedores, ¿cuál debe ser la primera acción según el protocolo?", choices: [
+          { text: "A) Intentar mover contenedores con maquinaria pesada.", correct: false, feedback: "Error. Riesgo de propagación y atrapamiento." },
+          { text: "B) Dar alarma inmediata, evacuar y notificar a bomberos.", correct: true, feedback: "Correcto. La vida es la prioridad máxima." },
+          { text: "C) Buscar el origen individualmente antes de informar.", correct: false, feedback: "Error. El fuego se propaga en segundos." }
+        ]},
+        { text: "2. En caso de un robo con utilización de armas de fuego, ¿qué conducta prioriza la seguridad?", choices: [
+          { text: "A) Enfrentar a los delincuentes con herramientas.", correct: false, feedback: "Error crítico. Riesgo letal innecesario." },
+          { text: "B) Mantener la calma y seguir instrucciones de asaltantes.", correct: true, feedback: "Correcto. Preservar la vida es el objetivo primordial." },
+          { text: "C) Activar alarmas sonoras con delincuentes presentes.", correct: false, feedback: "Riesgo. Puede generar reacción violenta." }
+        ]},
+        { text: "3. El CCTV detecta una intrusión perimetral nocturna. ¿Cuál es el procedimiento correcto?", choices: [
+          { text: "A) Abandonar el puesto para interceptar al intruso.", correct: false, feedback: "Error. Deja el centro de monitoreo desprotegido." },
+          { text: "B) Informar a supervisor y fuerzas de orden, manteniendo monitoreo.", correct: true, feedback: "Correcto. Coordinación y vigilancia continua." },
+          { text: "C) Esperar a confirmar la intención del intruso.", correct: false, feedback: "Error. La intrusión ya es un incidente." }
+        ]},
+        { text: "4. Ante un accidente grave con resultado de muerte, ¿medida inmediata?", choices: [
+          { text: "A) Trasladar el cuerpo para no afectar la operación.", correct: false, feedback: "Ilegal. Altera la escena del suceso." },
+          { text: "B) Paralizar faenas, aislar el sitio y notificar a Fiscalía/Policía.", correct: true, feedback: "Correcto. Cumplimiento legal y protocolo." },
+          { text: "C) Limpiar el área rápidamente.", correct: false, feedback: "Error grave. Obstrucción a la justicia." }
+        ]},
+        { text: "5. ¿Cuál es el objetivo primordial ante un incendio, robo o accidente fatal?", choices: [
+          { text: "A) Proteger la integridad física de las personas.", correct: true, feedback: "Correcto. Valor supremo de la Empresa." },
+          { text: "B) Asegurar la documentación.", correct: false, feedback: "Incorrecto. Lo material es secundario." },
+          { text: "C) Retomar operaciones rápido.", correct: false, feedback: "Incorrecto. La seguridad manda." }
+        ]},
+        { text: "6. Durante una emergencia química, ¿cuál es una de las responsabilidades específicas de los Guardias de Porterías de los Accesos Principales?", choices: [
+          { text: "A) Elaborar el informe de experiencia final junto con el COS.", correct: false, feedback: "Error. Esa responsabilidad corresponde al COS, no al guardia de portería." },
+          { text: "B) Realizar sobrevuelos para delimitar el área del derrame.", correct: false, feedback: "Error. Los sobrevuelos no son función de los guardias de accesos." },
+          { text: "C) Mantener las vías de salida expeditas para los móviles que acudan a la emergencia.", correct: true, feedback: "Correcto. Mantener las vías expeditas asegura la llegada rápida de emergencias." }
+        ]},
+        { text: "7. ¿Quién es el encargado de liderar en terreno la aplicación del protocolo de reacción frente a la emergencia?", choices: [
+          { text: "A) El Operador de Drone (R.P.A.).", correct: false, feedback: "Error. El operador de drone apoya visualmente pero no lidera en terreno." },
+          { text: "B) El Supervisor en turno.", correct: true, feedback: "Correcto. El Supervisor en turno es el responsable de liderar la aplicación del protocolo." },
+          { text: "C) El Centralista de turno.", correct: false, feedback: "Error. El centralista coordina desde el centro de control, no en terreno." }
+        ]},
+        { text: "8. Ante la sospecha de que la mochila sea un artefacto explosivo, ¿cuál debe ser la reacción inmediata de quien realiza el hallazgo?", choices: [
+          { text: "A) Abrir la mochila con cuidado para verificar si contiene cables o detonadores.", correct: false, feedback: "Error crítico. Manipular un objeto sospechoso puede causar una detonación." },
+          { text: "B) Trasladar el objeto rápidamente a una zona abierta fuera del edificio administrativo.", correct: false, feedback: "Error. Trasladar el objeto aumenta el riesgo de explosión." },
+          { text: "C) No manipular, mover ni trasladar el objeto en ninguna circunstancia e informar inmediatamente.", correct: true, feedback: "Correcto. Nunca manipular ni mover objetos sospechosos; informar inmediatamente." }
+        ]},
+        { text: "9. Una vez detectado el objeto sospechoso, ¿a quiénes se les debe dar aviso inmediato para activar el protocolo?", choices: [
+          { text: "A) Exclusivamente a Carabineros de Chile antes de informar internamente.", correct: false, feedback: "Error. Debe informarse primero a las autoridades internas antes de externos." },
+          { text: "B) Al Supervisor de Seguridad, al Administrador de Contratos de Securitas y al jefe de Turno.", correct: true, feedback: "Correcto. Aviso inmediato al Supervisor, Administrador de Securitas y jefe de Turno." },
+          { text: "C) Únicamente a los empleados de la gerencia para que comiencen a salir por su cuenta.", correct: false, feedback: "Error. Los empleados no deben evacuar por cuenta propia sin activar protocolo." }
+        ]},
+        { text: "10. ¿Cuál es una de las acciones preventivas y de control que debe ejecutarse en el sitio del hallazgo mientras llega el personal especializado?", choices: [
+          { text: "A) Intentar neutralizar el artefacto utilizando conocimientos básicos de seguridad.", correct: false, feedback: "Error grave. Nunca intentar neutralizar sin equipo especializado." },
+          { text: "B) Desbloquear todas las puertas, incluso las que no son vías de escape, para ventilar.", correct: false, feedback: "Error. Desbloquear puertas innecesarias puede comprometer la seguridad." },
+          { text: "C) Restringir el acceso al área y establecer un anillo de seguridad alrededor del objeto.", correct: true, feedback: "Correcto. Restringir acceso y formar anillo de seguridad es la acción preventiva adecuada." }
+        ]}
       ],
       cctv: [
-        {
-          text: "1. Durante el monitoreo, observa a un individuo sospechoso merodeando el cierre perimetral con una herramienta de corte. ¿Qué acción de CCTV corresponde?",
-          choices: [
-            { text: "A) Realizar zoom preventivo, iniciar grabación y alertar a la patrulla de seguridad externa.", correct: true, feedback: "Correcto. La detección temprana y alerta permite frustrar la intrusión." },
-            { text: "B) Ignorar si no ha ingresado aún al recinto para no generar falsas alarmas.", correct: false, feedback: "Error. El merodeo con herramientas es una amenaza inminente." }
-          ]
-        },
-        {
-          text: "2. Se reporta un incidente en una zona ciega de las cámaras fijas. ¿Cómo debe proceder el operador de CCTV?",
-          choices: [
-            { text: "A) Direccionar el domo PTZ más cercano al área y coordinar con el personal de tierra para que sea sus ojos.", correct: true, feedback: "Correcto. La combinación de PTZ y personal de tierra es clave en zonas críticas." },
-            { text: "B) Informar que no hay visibilidad y esperar a que el incidente se desplace a una zona cubierta.", correct: false, feedback: "Error. El operador debe buscar activamente ángulos alternativos." }
-          ]
-        },
-        {
-          text: "3. En el análisis de imágenes post-evento, descubre que una cámara fue movida o tapada durante el turno anterior. ¿Cuál es el protocolo?",
-          choices: [
-            { text: "A) Registrar en la bitácora, informar al jefe de seguridad y solicitar revisión técnica inmediata.", correct: true, feedback: "Correcto. El sabotaje de cámaras suele preceder a delitos mayores." },
-            { text: "B) Reubicarla mediante software sin informar si no ocurrió ningún robo.", correct: false, feedback: "Error. Se debe investigar por qué y quién alteró el sistema." }
-          ]
-        }
+        { text: "1. Durante el monitoreo, observa a un individuo sospechoso merodeando el cierre perimetral con una herramienta de corte. ¿Qué acción de CCTV corresponde?", choices: [
+          { text: "A) Realizar zoom preventivo, iniciar grabación y alertar a la patrulla de seguridad externa.", correct: true, feedback: "Correcto. La detección temprana y alerta permite frustrar la intrusión." },
+          { text: "B) Ignorar si no ha ingresado aún al recinto para no generar falsas alarmas.", correct: false, feedback: "Error. El merodeo con herramientas es una amenaza inminente." }
+        ]},
+        { text: "2. Se reporta un incidente en una zona ciega de las cámaras fijas. ¿Cómo debe proceder el operador de CCTV?", choices: [
+          { text: "A) Direccionar el domo PTZ más cercano al área y coordinar con el personal de tierra para que sea sus ojos.", correct: true, feedback: "Correcto. La combinación de PTZ y personal de tierra es clave en zonas críticas." },
+          { text: "B) Informar que no hay visibilidad y esperar a que el incidente se desplace a una zona cubierta.", correct: false, feedback: "Error. El operador debe buscar activamente ángulos alternativos." }
+        ]},
+        { text: "3. En el análisis de imágenes post-evento, descubre que una cámara fue movida o tapada durante el turno anterior. ¿Cuál es el protocolo?", choices: [
+          { text: "A) Registrar en la bitácora, informar al jefe de seguridad y solicitar revisión técnica inmediata.", correct: true, feedback: "Correcto. El sabotaje de cámaras suele preceder a delitos mayores." },
+          { text: "B) Reubicarla mediante software sin informar si no ocurrió ningún robo.", correct: false, feedback: "Error. Se debe investigar por qué y quién alteró el sistema." }
+        ]}
       ]
     };
 
     let state = { area: null, step: 0, points: 0, feedbackLog: [] };
 
+    // ==================== PWA INTEGRADA (todo en un solo archivo) ====================
+    function registerPWA() {
+      // 1. Manifest dinámico
+      const manifestData = {
+        name: "Simulador FENIX GOLD",
+        short_name: "Fenix Gold",
+        start_url: ".",
+        display: "standalone",
+        background_color: "#0a0e1a",
+        theme_color: "#00d9ff",
+        orientation: "portrait-primary",
+        description: "Entrenamiento para decisiones críticas - Protocolos FENIX GOLD",
+        icons: [
+          { src: "https://via.placeholder.com/192x192/00d9ff/070a1a?text=🛡️", sizes: "192x192", type: "image/png" },
+          { src: "https://via.placeholder.com/512x512/00d9ff/070a1a?text=🛡️", sizes: "512x512", type: "image/png" }
+        ]
+      };
+
+      const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
+      const manifestURL = URL.createObjectURL(manifestBlob);
+      
+      const link = document.createElement('link');
+      link.rel = 'manifest';
+      link.href = manifestURL;
+      document.head.appendChild(link);
+
+      // 2. Service Worker inline (sin archivo externo)
+      const swCode = `
+        const CACHE_NAME = 'fenix-gold-v1';
+        self.addEventListener('install', e => {
+          e.waitUntil(
+            caches.open(CACHE_NAME).then(cache => cache.addAll(['./']))
+          );
+        });
+        self.addEventListener('fetch', e => {
+          e.respondWith(
+            caches.match(e.request).then(response => response || fetch(e.request))
+          );
+        });
+      `;
+
+      const swBlob = new Blob([swCode], { type: 'application/javascript' });
+      const swURL = URL.createObjectURL(swBlob);
+
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register(swURL)
+          .then(() => console.log('✅ Simulador instalado como APP de teléfono'))
+          .catch(err => console.log('PWA error:', err));
+      }
+    }
+
+    // ==================== LÓGICA DEL SIMULADOR (sin cambios) ====================
     function init() {
+      // Partículas
       const container = document.getElementById('particles');
       for (let i = 0; i < 30; i++) {
         const p = document.createElement('div');
@@ -506,6 +318,8 @@
 
       document.getElementById('btn-reset').onclick = () => location.reload();
       document.getElementById('btn-face-analysis').onclick = toggleFace;
+
+      registerPWA();   // ← Activa la modalidad de APP
     }
 
     function startApp(areaId) {
@@ -523,7 +337,6 @@
       document.getElementById('node-text').innerText = data.text;
       const choicesGrid = document.getElementById('choices');
       choicesGrid.innerHTML = '';
-
       data.choices.forEach(c => {
         const btn = document.createElement('button');
         btn.className = 'choice-btn';
@@ -535,14 +348,12 @@
 
     function handleChoice(c) {
       state.feedbackLog.push({ q: scenarios[state.area][state.step].text, a: c.text, f: c.feedback });
-      
       if (c.correct) {
         state.points += (100 / scenarios[state.area].length);
         updateUI();
       } else {
         showModal("Protocolo Incorrecto", c.feedback);
       }
-
       state.step++;
       if (state.step < scenarios[state.area].length) {
         renderStep();
@@ -569,8 +380,6 @@
     function downloadPDF() {
       const name = document.getElementById('user-name').value || "Sin Nombre";
       const rut = document.getElementById('user-rut').value || "Sin RUT";
-      
-      // Llenar plantilla PDF
       document.getElementById('pdf-user-name').innerText = name;
       document.getElementById('pdf-user-rut').innerText = rut;
       document.getElementById('pdf-date').innerText = new Date().toLocaleString();
@@ -580,28 +389,18 @@
       fbContent.innerHTML = '';
       state.feedbackLog.forEach((item, i) => {
         fbContent.innerHTML += `
-            <div class="pdf-item">
-                <p><strong>P${i+1}:</strong> ${item.q}</p>
-                <p><strong>Tu Respuesta:</strong> ${item.a}</p>
-                <p><strong>Feedback:</strong> ${item.f}</p>
-            </div>
+          <div class="pdf-item">
+            <p><strong>P${i+1}:</strong> ${item.q}</p>
+            <p><strong>Tu Respuesta:</strong> ${item.a}</p>
+            <p><strong>Feedback:</strong> ${item.f}</p>
+          </div>
         `;
       });
 
       const element = document.getElementById('pdf-report-template');
       element.style.display = 'block';
-
-      const opt = {
-        margin: 1,
-        filename: `Reporte_Seguridad_${name}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-      };
-
-      html2pdf().set(opt).from(element).save().then(() => {
-        element.style.display = 'none';
-      });
+      const opt = { margin: 1, filename: `Reporte_Seguridad_${name}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } };
+      html2pdf().set(opt).from(element).save().then(() => { element.style.display = 'none'; });
     }
 
     function toggleFace() {
