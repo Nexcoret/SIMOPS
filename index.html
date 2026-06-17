@@ -1,431 +1,2141 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  
-  <!-- === PWA INTEGRADA EN UN SOLO ARCHIVO (sin archivos externos) === -->
-  <meta name="theme-color" content="#0a0e1a">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Fenix Gold">
-  <link rel="apple-touch-icon" href="https://via.placeholder.com/180x180/00d9ff/070a1a?text=🛡️">
-  <!-- ======================================================== -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DJI Simulador v5</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Exo+2:wght@200;300;400;600&family=Share+Tech+Mono&display=swap');
 
-  <title>Simulador de Capacitación</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <style>
-    :root {
-      --bg-primary: #0a0e1a;
-      --bg-secondary: #141827;
-      --bg-card: #1a1f35;
-      --accent: #00d9ff;
-      --accent-glow: rgba(0, 217, 255, 0.3);
-      --success: #10b981;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --text-primary: #ffffff;
-      --text-secondary: #94a3b8;
-      --border: rgba(255, 255, 255, 0.1);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 100%);
-      color: var(--text-primary);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-    .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-    .particle {
-      position: absolute; width: 2px; height: 2px; background: var(--accent);
-      border-radius: 50%; opacity: 0.3; animation: float 20s infinite;
-    }
-    @keyframes float { 0%, 100% { transform: translate(0, 0); opacity: 0; } 50% { opacity: 0.5; } }
-    .container { max-width: 1400px; margin: 0 auto; padding: 20px; position: relative; z-index: 1; }
-    header { display: flex; align-items: center; gap: 20px; margin-bottom: 30px; padding: 25px; background: linear-gradient(135deg, var(--bg-card) 0%, rgba(26, 31, 53, 0.6) 100%); border-radius: 20px; border: 1px solid var(--border); backdrop-filter: blur(10px); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); }
-    .logo { width: 50px; height: 50px; background: linear-gradient(135deg, var(--accent) 0%, #0080ff 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 20px var(--accent-glow); }
-    h1 { font-size: 28px; font-weight: 700; background: linear-gradient(135deg, var(--accent) 0%, #ffffff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .subtitle { color: var(--text-secondary); font-size: 14px; margin-top: 5px; }
-    .header-actions { margin-left: auto; display: flex; gap: 10px; }
-    button { padding: 10px 20px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 14px; display: flex; align-items: center; gap: 8px; }
-    button.primary { background: linear-gradient(135deg, var(--accent) 0%, #0080ff 100%); color: #070a1a; box-shadow: 0 4px 15px var(--accent-glow); }
-    button.ghost { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); }
-    .card { background: linear-gradient(135deg, var(--bg-card) 0%, rgba(26, 31, 53, 0.8) 100%); border-radius: 16px; padding: 24px; border: 1px solid var(--border); backdrop-filter: blur(10px); }
-    .main-layout { display: grid; grid-template-columns: 1fr 350px; gap: 20px; }
-    .area-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
-    .area-card { cursor: pointer; padding: 30px; text-align: center; transition: all 0.3s ease; }
-    .area-card:hover { border-color: var(--accent); }
-    .node-content { background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 12px; margin-bottom: 25px; border-left: 4px solid var(--accent); }
-    .node-text { font-size: 18px; line-height: 1.6; }
-    .choices-grid { display: grid; gap: 15px; }
-    .choice-btn { padding: 20px; text-align: left; background: var(--bg-card); border: 2px solid var(--border); border-radius: 12px; cursor: pointer; color: white; transition: 0.3s; }
-    .choice-btn:hover { border-color: var(--accent); transform: translateX(10px); }
-    .sidebar { position: sticky; top: 20px; height: fit-content; }
-    .user-input { width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 8px; color: white; margin-top: 10px; }
-    .dimension-item { display: flex; justify-content: space-between; padding: 12px; background: rgba(255, 255, 255, 0.03); border-radius: 8px; margin-bottom: 8px; }
-    .dimension-value { color: var(--accent); font-weight: bold; }
-    .progress-bar { width: 100%; height: 12px; background: rgba(255, 255, 255, 0.05); border-radius: 999px; overflow: hidden; margin-top: 10px; }
-    .progress-fill { height: 100%; background: var(--accent); transition: width 0.5s ease; }
-    .face-analysis-module { position: absolute; top: 20px; right: 20px; width: 120px; z-index: 10; }
-    #face-video { width: 100%; border-radius: 8px; border: 2px solid var(--danger); transform: scaleX(-1); }
-    .modal { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); z-index: 1000; align-items: center; justify-content: center; }
-    .modal.active { display: flex; }
-    .modal-content { background: var(--bg-card); padding: 30px; border-radius: 16px; max-width: 500px; border: 1px solid var(--border); }
-    #pdf-report-template { display: none; padding: 40px; background: white; color: black; font-family: Arial, sans-serif; }
-    .pdf-header { border-bottom: 2px solid #00d9ff; padding-bottom: 10px; margin-bottom: 20px; }
-    .pdf-item { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-  </style>
+  :root {
+    --green: #00ff41;
+    --green-dim: #00cc33;
+    --green-dark: #003311;
+    --amber: #ffb800;
+    --amber-dim: #cc9000;
+    --red: #ff3333;
+    --blue: #00aaff;
+    --white: #e8f0e8;
+    --bg: #080c08;
+    --panel: rgba(4, 12, 4, 0.85);
+    --border: rgba(0, 255, 65, 0.25);
+    --border-bright: rgba(0, 255, 65, 0.6);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Rajdhani', sans-serif;
+    color: var(--green);
+    overflow: hidden;
+    user-select: none;
+  }
+
+  #canvas-container {
+    position: fixed; inset: 0;
+    z-index: 0;
+  }
+
+  canvas { display: block; width: 100% !important; height: 100% !important; }
+
+  /* ── TOP HUD BAR ── */
+  #top-hud {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 48px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,8,0,0.7) 100%);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center;
+    padding: 0 12px;
+    gap: 6px;
+    z-index: 100;
+    backdrop-filter: blur(4px);
+  }
+
+  .hud-logo {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    color: var(--green);
+    letter-spacing: 3px;
+    border: 1px solid var(--green-dim);
+    padding: 2px 8px;
+    margin-right: 8px;
+    text-shadow: 0 0 8px var(--green);
+  }
+
+  .top-stat {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 2px 10px;
+    border-left: 1px solid var(--border);
+    min-width: 60px;
+  }
+  .top-stat-label {
+    font-size: 9px; font-weight: 600; letter-spacing: 1px;
+    color: rgba(0,255,65,0.5); text-transform: uppercase;
+  }
+  .top-stat-value {
+    font-size: 15px; font-weight: 700;
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--green);
+    text-shadow: 0 0 6px var(--green);
+  }
+  .top-stat-value.amber { color: var(--amber); text-shadow: 0 0 6px var(--amber); }
+  .top-stat-value.red   { color: var(--red);   text-shadow: 0 0 6px var(--red); }
+  .top-stat-value.blue  { color: var(--blue);  text-shadow: 0 0 6px var(--blue); }
+
+  .top-spacer { flex: 1; }
+
+  /* Flight mode badge */
+  #flight-mode-badge {
+    padding: 4px 12px;
+    border: 1px solid var(--amber);
+    color: var(--amber);
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 2px;
+    text-shadow: 0 0 8px var(--amber);
+    box-shadow: inset 0 0 8px rgba(255,184,0,0.1);
+  }
+
+  /* ── SIDE HUD PANELS ── */
+  .side-panel {
+    position: fixed;
+    top: 56px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    padding: 10px;
+    min-width: 160px;
+  }
+
+  #left-panel { left: 8px; border-radius: 0 0 4px 4px; }
+  #right-panel { right: 8px; border-radius: 0 0 4px 4px; }
+
+  .panel-title {
+    font-size: 9px; font-weight: 600; letter-spacing: 2px;
+    color: rgba(0,255,65,0.4); text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 4px; margin-bottom: 8px;
+  }
+
+  .data-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 5px;
+  }
+  .data-label {
+    font-size: 10px; color: rgba(0,255,65,0.5); letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .data-value {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 15px; font-weight: 700;
+    color: var(--green);
+    text-shadow: 0 0 5px rgba(0,255,65,0.5);
+  }
+  .data-unit {
+    font-size: 9px; color: rgba(0,255,65,0.4);
+    margin-left: 2px;
+  }
+
+  /* ── BATTERY BAR ── */
+  .battery-wrap { margin: 8px 0 4px; }
+  .battery-track {
+    height: 6px; background: rgba(0,255,65,0.1);
+    border: 1px solid var(--border); border-radius: 2px;
+    overflow: hidden; margin-top: 4px;
+  }
+  #battery-fill {
+    height: 100%; width: 87%;
+    background: linear-gradient(90deg, var(--green-dim), var(--green));
+    transition: width 0.5s, background 0.5s;
+    box-shadow: 0 0 6px var(--green);
+  }
+
+  /* ── COMPASS ── */
+  #compass-wrap {
+    position: fixed; bottom: 90px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 4px;
+  }
+
+  #compass-ring {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    border: 2px solid var(--border-bright);
+    background: radial-gradient(circle at center, rgba(0,20,0,0.9), rgba(0,8,0,0.95));
+    position: relative;
+    box-shadow: 0 0 12px rgba(0,255,65,0.2), inset 0 0 12px rgba(0,0,0,0.5);
+  }
+
+  #compass-needle {
+    position: absolute; top: 50%; left: 50%;
+    width: 2px; height: 32px;
+    margin-left: -1px; margin-top: -32px;
+    transform-origin: bottom center;
+    background: linear-gradient(180deg, var(--red) 50%, rgba(0,255,65,0.6) 50%);
+    transition: transform 0.1s linear;
+    border-radius: 1px 1px 0 0;
+  }
+
+  .compass-mark {
+    position: absolute; font-size: 9px; font-weight: 700;
+    color: rgba(0,255,65,0.7); width: 12px; text-align: center;
+  }
+
+  #compass-hdg {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px; color: var(--green);
+    text-shadow: 0 0 6px var(--green);
+    letter-spacing: 1px;
+  }
+
+  /* ── ARTIFICIAL HORIZON (ADI) ── */
+  #adi-wrap {
+    position: fixed; bottom: 90px; right: 16px;
+    z-index: 100; width: 110px; height: 110px;
+  }
+
+  #adi-canvas { border-radius: 50%; }
+
+  /* ── MINI MAP ── */
+  #minimap-wrap {
+    position: fixed; top: 56px; right: 176px;
+    z-index: 100;
+    width: 140px; height: 140px;
+    border: 1px solid var(--border-bright);
+    background: rgba(0,15,0,0.9);
+    overflow: hidden;
+  }
+
+  #minimap-canvas { width: 100%; height: 100%; }
+
+  .minimap-label {
+    position: absolute; bottom: 2px; left: 4px;
+    font-size: 8px; color: rgba(0,255,65,0.4); letter-spacing: 1px;
+  }
+
+  /* ── BOTTOM CONTROLS (joystick area) ── */
+  #bottom-controls {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: 82px;
+    background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,5,0,0.8) 100%);
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px;
+    z-index: 100;
+    backdrop-filter: blur(6px);
+  }
+
+  /* Joystick */
+  .joystick-section {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+
+  .joystick-label {
+    font-size: 9px; letter-spacing: 2px; color: rgba(0,255,65,0.4);
+    text-transform: uppercase;
+  }
+
+  .joystick-outer {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    border: 2px solid var(--border-bright);
+    background: radial-gradient(circle at center, #0a1a0a, #050d05);
+    position: relative;
+    box-shadow: 0 0 10px rgba(0,255,65,0.15), inset 0 2px 4px rgba(0,0,0,0.8);
+    cursor: pointer;
+    touch-action: none;
+  }
+
+  .joystick-inner {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #1a3a1a, #0a1a0a);
+    border: 1px solid var(--green-dim);
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.8), 0 0 6px rgba(0,255,65,0.2);
+    transition: transform 0.05s;
+    pointer-events: none;
+  }
+
+  .joystick-crosshair {
+    position: absolute; inset: 0; pointer-events: none;
+  }
+  .crosshair-h, .crosshair-v {
+    position: absolute; background: rgba(0,255,65,0.1);
+  }
+  .crosshair-h { height: 1px; top: 50%; left: 0; right: 0; transform: translateY(-50%); }
+  .crosshair-v { width: 1px; left: 50%; top: 0; bottom: 0; transform: translateX(-50%); }
+
+  /* Center controls */
+  #center-controls {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+
+  .btn-row { display: flex; gap: 8px; }
+
+  .ctrl-btn {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1px;
+    padding: 5px 12px;
+    border: 1px solid var(--border-bright);
+    background: rgba(0,20,0,0.8);
+    color: var(--green);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    border-radius: 2px;
+  }
+  .ctrl-btn:hover { background: rgba(0,255,65,0.1); box-shadow: 0 0 8px rgba(0,255,65,0.3); }
+  .ctrl-btn:active { background: rgba(0,255,65,0.2); }
+
+  .ctrl-btn.amber {
+    border-color: var(--amber); color: var(--amber);
+    background: rgba(20,15,0,0.8);
+  }
+  .ctrl-btn.amber:hover { background: rgba(255,184,0,0.1); box-shadow: 0 0 8px rgba(255,184,0,0.3); }
+
+  .ctrl-btn.red {
+    border-color: var(--red); color: var(--red);
+    background: rgba(20,0,0,0.8);
+  }
+  .ctrl-btn.red:hover { background: rgba(255,51,51,0.15); box-shadow: 0 0 8px rgba(255,51,51,0.3); }
+  .ctrl-btn.red.active-btn { background: rgba(255,51,51,0.25); box-shadow: 0 0 12px rgba(255,51,51,0.5); }
+
+  .ctrl-btn.blue {
+    border-color: var(--blue); color: var(--blue);
+    background: rgba(0,10,20,0.8);
+  }
+
+  /* Gimbal slider */
+  #gimbal-section {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .gimbal-label { font-size: 9px; letter-spacing: 2px; color: rgba(0,255,65,0.4); }
+
+  #gimbal-slider {
+    writing-mode: vertical-lr;
+    direction: rtl;
+    appearance: none;
+    width: 28px; height: 64px;
+    background: transparent; outline: none; cursor: pointer;
+  }
+  #gimbal-slider::-webkit-slider-runnable-track {
+    width: 3px; height: 64px;
+    background: rgba(0,255,65,0.2);
+    border: 1px solid var(--border); border-radius: 2px;
+  }
+  #gimbal-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px; height: 16px;
+    border-radius: 2px;
+    background: var(--green-dim);
+    border: 1px solid var(--green);
+    box-shadow: 0 0 6px var(--green);
+    margin-left: -7px;
+  }
+
+  /* ── STATUS MESSAGES ── */
+  #status-msg {
+    position: fixed; top: 56px; left: 50%; transform: translateX(-50%);
+    z-index: 110;
+    font-size: 12px; font-weight: 600; letter-spacing: 2px;
+    color: var(--amber);
+    text-shadow: 0 0 8px var(--amber);
+    background: rgba(0,0,0,0.7);
+    padding: 4px 16px;
+    border: 1px solid rgba(255,184,0,0.3);
+    opacity: 0; transition: opacity 0.3s;
+    pointer-events: none;
+    text-transform: uppercase;
+  }
+
+  /* ── NIGHT MODE OVERLAY ── */
+  #night-overlay {
+    position: fixed; inset: 0; z-index: 1;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.4) 100%);
+    opacity: 0; transition: opacity 2s;
+  }
+
+  /* ── GPS INDICATOR ── */
+  .gps-dots { display: flex; gap: 2px; align-items: center; }
+  .gps-dot {
+    width: 4px; height: 10px; border-radius: 1px;
+    background: var(--green); opacity: 0.3;
+    transition: opacity 0.3s;
+  }
+  .gps-dot.active { opacity: 1; box-shadow: 0 0 4px var(--green); }
+
+  /* ── KEYBOARD HINTS ── */
+  #key-hints {
+    position: fixed; bottom: 90px; left: 8px;
+    z-index: 100;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    font-size: 9px; letter-spacing: 1px;
+    color: rgba(0,255,65,0.4);
+    line-height: 1.8;
+  }
+  #key-hints span { color: rgba(0,255,65,0.7); font-weight: 600; }
+
+  .sep-line {
+    width: 1px; height: 32px; background: var(--border);
+    margin: 0 4px;
+  }
+
+  /* Scanline effect */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none; z-index: 200;
+  }
+
+  /* Vignette */
+  #vignette {
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at center,
+      transparent 55%, rgba(0,0,0,0.6) 100%);
+    pointer-events: none; z-index: 2;
+  }
+
+  /* Corner decorations */
+  .corner {
+    position: fixed; width: 20px; height: 20px;
+    z-index: 101; pointer-events: none;
+  }
+  .corner-tl { top: 52px; left: 4px; border-top: 1px solid var(--green-dim); border-left: 1px solid var(--green-dim); }
+  .corner-tr { top: 52px; right: 4px; border-top: 1px solid var(--green-dim); border-right: 1px solid var(--green-dim); }
+  .corner-bl { bottom: 86px; left: 4px; border-bottom: 1px solid var(--green-dim); border-left: 1px solid var(--green-dim); }
+  .corner-br { bottom: 86px; right: 4px; border-bottom: 1px solid var(--green-dim); border-right: 1px solid var(--green-dim); }
+
+  /* Throttle indicator */
+  #throttle-bar {
+    position: fixed; left: 180px; top: 56px; bottom: 88px;
+    width: 14px; z-index: 100;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 4px;
+  }
+  .thr-label { font-size: 8px; color: rgba(0,255,65,0.4); letter-spacing: 1px; writing-mode: vertical-rl; transform: rotate(180deg); }
+  .thr-track {
+    flex: 1; width: 4px;
+    background: rgba(0,255,65,0.08);
+    border: 1px solid var(--border); border-radius: 2px;
+    position: relative; overflow: hidden;
+  }
+  #thr-fill {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 0%;
+    background: linear-gradient(0deg, var(--green-dim), var(--green));
+    transition: height 0.1s;
+    box-shadow: 0 0 6px var(--green);
+  }
+
+  #loading-screen {
+    position: fixed; inset: 0; z-index: 999;
+    background: #000;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 20px;
+  }
+  #loading-screen .logo { font-size: 32px; letter-spacing: 8px; color: var(--green); font-family: 'Share Tech Mono', monospace; text-shadow: 0 0 20px var(--green); }
+  #loading-screen .sub { font-size: 12px; letter-spacing: 3px; color: rgba(0,255,65,0.4); }
+  #load-bar-track { width: 300px; height: 2px; background: rgba(0,255,65,0.1); border: 1px solid var(--border); }
+  #load-bar-fill { height: 100%; width: 0%; background: var(--green); box-shadow: 0 0 8px var(--green); transition: width 0.3s; }
+  #load-text { font-size: 10px; color: rgba(0,255,65,0.5); letter-spacing: 2px; font-family: 'Share Tech Mono'; }
+</style>
 </head>
 <body>
-  <div class="particles" id="particles"></div>
 
-  <div id="notification-modal" class="modal">
-    <div class="modal-content">
-      <h3 id="modal-title" style="color: var(--accent); margin-bottom: 15px;"></h3>
-      <p id="modal-message" style="color: var(--text-primary); margin-bottom: 20px;"></p>
-      <button class="primary" onclick="hideModal()">Aceptar</button>
+<div id="loading-screen">
+  <div class="logo">DJI SIM PRO</div>
+  <div class="sub">SISTEMA DE ENTRENAMIENTO DE VUELO v5.0</div>
+  <div id="load-bar-track"><div id="load-bar-fill"></div></div>
+  <div id="load-text">INITIALIZING TERRAIN ENGINE...</div>
+</div>
+
+<div id="canvas-container"></div>
+<div id="vignette"></div>
+<div id="night-overlay"></div>
+
+<!-- Corners -->
+<div class="corner corner-tl"></div>
+<div class="corner corner-tr"></div>
+<div class="corner corner-bl"></div>
+<div class="corner corner-br"></div>
+
+<!-- TOP HUD -->
+<div id="top-hud">
+  <div class="hud-logo">DJI</div>
+
+  <div class="top-stat">
+    <div class="top-stat-label">ALT AGL</div>
+    <div class="top-stat-value" id="hud-alt">0.0<span style="font-size:9px;opacity:.5">m</span></div>
+  </div>
+
+  <div class="top-stat">
+    <div class="top-stat-label">H.SPD</div>
+    <div class="top-stat-value" id="hud-hspd">0.0<span style="font-size:9px;opacity:.5">m/s</span></div>
+  </div>
+
+  <div class="top-stat">
+    <div class="top-stat-label">V.SPD</div>
+    <div class="top-stat-value" id="hud-vspd">0.0<span style="font-size:9px;opacity:.5">m/s</span></div>
+  </div>
+
+  <div class="sep-line"></div>
+
+  <div class="top-stat">
+    <div class="top-stat-label">DIST</div>
+    <div class="top-stat-value blue" id="hud-dist">0<span style="font-size:9px;opacity:.5">m</span></div>
+  </div>
+
+  <div class="top-stat">
+    <div class="top-stat-label">HEADING</div>
+    <div class="top-stat-value" id="hud-hdg">000°</div>
+  </div>
+
+  <div class="sep-line"></div>
+
+  <div class="top-stat">
+    <div class="top-stat-label">GPS</div>
+    <div class="gps-dots">
+      <div class="gps-dot active" id="gd1"></div>
+      <div class="gps-dot active" id="gd2"></div>
+      <div class="gps-dot active" id="gd3"></div>
+      <div class="gps-dot active" id="gd4"></div>
+      <div class="gps-dot active" id="gd5"></div>
     </div>
   </div>
 
-  <div class="container">
-    <header>
-      <div class="logo">🛡️</div>
-      <div style="flex: 1;">
-        <h1>Simulador de aplicación de protocolos FENIX GOLD</h1>
-        <div class="subtitle">Entrenamiento para decisiones críticas</div>
+  <div class="top-stat">
+    <div class="top-stat-label">SATS</div>
+    <div class="top-stat-value" id="hud-sats">14</div>
+  </div>
+
+  <div class="top-stat">
+    <div class="top-stat-label">WIND</div>
+    <div class="top-stat-value amber" id="hud-wind">2.1<span style="font-size:9px;opacity:.5">m/s</span></div>
+  </div>
+
+  <div class="top-stat">
+    <div class="top-stat-label">TEMP</div>
+    <div class="top-stat-value" id="hud-temp">22°C</div>
+  </div>
+
+  <div class="top-spacer"></div>
+
+  <div id="flight-mode-badge" id="flight-mode">P-GPS</div>
+
+  <div class="top-stat" style="margin-left:8px">
+    <div class="top-stat-label">BATT</div>
+    <div class="top-stat-value" id="hud-batt" style="color:var(--green)">87%</div>
+  </div>
+</div>
+
+<!-- STATUS MESSAGE -->
+<div id="status-msg">MOTORS ARMED — READY TO FLY</div>
+
+<!-- LEFT PANEL -->
+<div id="left-panel" class="side-panel">
+  <div class="panel-title">◈ POSITION</div>
+  <div class="data-row">
+    <span class="data-label">ASL</span>
+    <span><span class="data-value" id="stat-asl">120.0</span><span class="data-unit">m</span></span>
+  </div>
+  <div class="data-row">
+    <span class="data-label">AGL</span>
+    <span><span class="data-value" id="stat-agl">0.0</span><span class="data-unit">m</span></span>
+  </div>
+  <div class="data-row">
+    <span class="data-label">LAT</span>
+    <span><span class="data-value" id="stat-lat" style="font-size:12px">-36.8240</span></span>
+  </div>
+  <div class="data-row">
+    <span class="data-label">LON</span>
+    <span><span class="data-value" id="stat-lon" style="font-size:12px">-73.0498</span></span>
+  </div>
+  <div class="panel-title" style="margin-top:10px">◈ ATTITUDE</div>
+  <div class="data-row">
+    <span class="data-label">PITCH</span>
+    <span><span class="data-value" id="stat-pitch">0.0</span><span class="data-unit">°</span></span>
+  </div>
+  <div class="data-row">
+    <span class="data-label">ROLL</span>
+    <span><span class="data-value" id="stat-roll">0.0</span><span class="data-unit">°</span></span>
+  </div>
+  <div class="data-row">
+    <span class="data-label">YAW</span>
+    <span><span class="data-value" id="stat-yaw">0.0</span><span class="data-unit">°</span></span>
+  </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div id="right-panel" class="side-panel">
+  <div class="panel-title">◈ PROPULSION</div>
+  <div class="data-row">
+    <span class="data-label">THROTTLE</span>
+    <span><span class="data-value" id="stat-thr">0</span><span class="data-unit">%</span></span>
+  </div>
+  <div class="data-row">
+    <span class="data-label">RPM AVG</span>
+    <span><span class="data-value" id="stat-rpm">0</span></span>
+  </div>
+  <div class="battery-wrap">
+    <div class="data-row">
+      <span class="data-label">BATTERY</span>
+      <span><span class="data-value" id="stat-batt">87</span><span class="data-unit">%</span></span>
+    </div>
+    <div class="battery-track"><div id="battery-fill"></div></div>
+  </div>
+  <div class="data-row">
+    <span class="data-label">VOLTAGE</span>
+    <span><span class="data-value" id="stat-volt">25.2</span><span class="data-unit">V</span></span>
+  </div>
+  <div class="data-row">
+    <span class="data-label">CURRENT</span>
+    <span><span class="data-value" id="stat-amp">0.0</span><span class="data-unit">A</span></span>
+  </div>
+  <div class="panel-title" style="margin-top:10px">◈ SIGNAL</div>
+  <div class="data-row">
+    <span class="data-label">RC LINK</span>
+    <span class="data-value" style="color:var(--green);font-size:12px">▇▇▇▇▇</span>
+  </div>
+  <div class="data-row">
+    <span class="data-label">VIDEO</span>
+    <span class="data-value" style="color:var(--blue);font-size:12px">HD·1080</span>
+  </div>
+  <div class="data-row">
+    <span class="data-label">LATENCY</span>
+    <span><span class="data-value" id="stat-lat2" style="color:var(--blue)">42</span><span class="data-unit">ms</span></span>
+  </div>
+</div>
+
+<!-- MINIMAP -->
+<div id="minimap-wrap">
+  <canvas id="minimap-canvas" width="140" height="140"></canvas>
+  <div class="minimap-label">MAP · 200m</div>
+</div>
+
+<!-- THROTTLE BAR -->
+<div id="throttle-bar">
+  <div class="thr-label">THR</div>
+  <div class="thr-track"><div id="thr-fill"></div></div>
+</div>
+
+<!-- COMPASS -->
+<div id="compass-wrap">
+  <div id="compass-ring">
+    <div id="compass-needle"></div>
+    <span class="compass-mark" style="top:3px;left:50%;transform:translateX(-50%)">N</span>
+    <span class="compass-mark" style="bottom:3px;left:50%;transform:translateX(-50%)">S</span>
+    <span class="compass-mark" style="left:3px;top:50%;transform:translateY(-50%)">W</span>
+    <span class="compass-mark" style="right:3px;top:50%;transform:translateY(-50%)">E</span>
+  </div>
+  <div id="compass-hdg">HDG 000°</div>
+</div>
+
+<!-- ADI canvas -->
+<div id="adi-wrap">
+  <canvas id="adi-canvas" width="110" height="110"></canvas>
+</div>
+
+<!-- KEYBOARD HINTS -->
+<div id="key-hints">
+  <span>W/S</span> Pitch F/B<br>
+  <span>A/D</span> Roll L/R<br>
+  <span>Q/E</span> Yaw L/R<br>
+  <span>↑/↓</span> Throttle<br>
+  <span>N</span> Day/Night<br>
+  <span>R</span> RTH<br>
+  <span>C</span> Camera
+</div>
+
+<!-- BOTTOM CONTROLS -->
+<div id="bottom-controls">
+
+  <!-- LEFT JOYSTICK: Throttle + Yaw -->
+  <div class="joystick-section">
+    <div class="joystick-label">THROTTLE · YAW</div>
+    <div class="joystick-outer" id="js-left">
+      <div class="joystick-crosshair">
+        <div class="crosshair-h"></div>
+        <div class="crosshair-v"></div>
       </div>
-      <div class="header-actions">
-        <button class="ghost" id="btn-face-analysis">👁️ Biometría Facial</button>
-        <button class="ghost" id="btn-reset">♻️ Reset</button>
+      <div class="joystick-inner" id="js-left-knob"></div>
+    </div>
+  </div>
+
+  <!-- CENTER CONTROLS -->
+  <div id="center-controls">
+    <div class="btn-row">
+      <button class="ctrl-btn blue" id="btn-night" onclick="toggleNight()">◑ DAY</button>
+      <button class="ctrl-btn" id="btn-mode" onclick="cycleMode()">P-GPS</button>
+      <button class="ctrl-btn amber" id="btn-rth" onclick="triggerRTH()">⌂ RTH</button>
+    </div>
+    <div class="btn-row">
+      <button class="ctrl-btn" id="btn-arm" onclick="toggleArm()">ARM</button>
+      <button class="ctrl-btn amber" id="btn-pause" onclick="togglePause()">⏸ PAUSE</button>
+      <button class="ctrl-btn red" id="btn-stop" onclick="emergencyStop()">✕ STOP</button>
+    </div>
+  </div>
+
+  <!-- GIMBAL -->
+  <div id="gimbal-section">
+    <div class="gimbal-label">GIMBAL</div>
+    <input type="range" id="gimbal-slider" min="-90" max="30" value="0"
+      oninput="updateGimbal(this.value)">
+    <div class="gimbal-label" id="gimbal-val">0°</div>
+  </div>
+
+  <!-- RIGHT JOYSTICK: Pitch + Roll -->
+  <div class="joystick-section">
+    <div class="joystick-label">PITCH · ROLL</div>
+    <div class="joystick-outer" id="js-right">
+      <div class="joystick-crosshair">
+        <div class="crosshair-h"></div>
+        <div class="crosshair-v"></div>
       </div>
-    </header>
-
-    <div class="main-layout">
-      <main>
-        <div id="view-area" class="card">
-          <h2 style="margin-bottom: 20px;">Selecciona tu área de desempeño</h2>
-          <div class="area-grid">
-            <div class="area-card card" data-area="industrial">
-              <div style="font-size:48px">🏭</div>
-              <h3>Industrial</h3>
-              <p style="color: var(--text-secondary);">Protocolos de emergencia.</p>
-            </div>
-            <div class="area-card card" data-area="cctv">
-              <div style="font-size:48px">📹</div>
-              <h3>CCTV / Análisis</h3>
-              <p style="color: var(--text-secondary);">Seguridad Privada - Monitoreo y detección de amenazas.</p>
-            </div>
-          </div>
-        </div>
-
-        <div id="view-play" style="display: none;">
-          <div id="face-analysis-module" class="face-analysis-module" style="display: none;">
-            <video id="face-video" autoplay></video>
-          </div>
-          <div class="card">
-            <h2 id="scenario-title" style="margin-bottom: 20px; color: var(--accent);">Cuestionario de Seguridad</h2>
-            <div class="node-content">
-              <div id="node-text" class="node-text"></div>
-            </div>
-            <div id="choices" class="choices-grid"></div>
-          </div>
-        </div>
-
-        <div id="view-report" style="display: none;">
-          <div class="card" style="text-align: center;">
-            <h2 style="color: var(--success); margin-bottom: 20px;">¡Entrenamiento Finalizado!</h2>
-            <div id="final-score-display" style="font-size: 48px; margin-bottom: 20px;">0%</div>
-            <button class="primary" onclick="downloadPDF()" style="margin: 0 auto;">📥 Descargar Reporte PDF</button>
-            <button class="ghost" onclick="location.reload()" style="margin: 10px auto;">Volver al Inicio</button>
-          </div>
-        </div>
-      </main>
-
-      <aside class="sidebar">
-        <div class="card">
-          <h3>👤 Datos del Operador</h3>
-          <input type="text" id="user-name" class="user-input" placeholder="Nombre Completo">
-          <input type="text" id="user-rut" class="user-input" placeholder="RUT (ej: 12.345.678-9)">
-        </div>
-        <div class="card" style="margin-top: 20px;">
-          <h3>📊 Dimensiones</h3>
-          <div class="dimension-item"><span>Procedimental</span><span class="dimension-value" id="dim-procedural">0</span></div>
-          <div class="dimension-item"><span>Seguridad</span><span class="dimension-value" id="dim-security">0</span></div>
-          <div class="dimension-item"><span>Comunicaciones</span><span class="dimension-value" id="dim-comms">0</span></div>
-          <div class="progress-bar">
-            <div id="progress-bar-fill" class="progress-fill" style="width: 0%"></div>
-          </div>
-          <div id="partial-score" style="text-align: right; margin-top: 10px; color: var(--accent);">0%</div>
-        </div>
-      </aside>
+      <div class="joystick-inner" id="js-right-knob"></div>
     </div>
   </div>
 
-  <div id="pdf-report-template">
-    <div class="pdf-header">
-      <h2>REPORTE DE EVALUACIÓN</h2>
-      <p id="pdf-date"></p>
-    </div>
-    <p><strong>Nombre:</strong> <span id="pdf-user-name"></span></p>
-    <p><strong>RUT:</strong> <span id="pdf-user-rut"></span></p>
-    <p><strong>Resultado Final:</strong> <span id="pdf-final-score"></span></p>
-    <hr style="margin: 20px 0;">
-    <h3>Detalle de la Evaluación:</h3>
-    <div id="pdf-feedback-content"></div>
-  </div>
+</div>
 
-  <script>
-    // ==================== ESCENARIOS COMPLETOS (corregidos) ====================
-    const scenarios = {
-      industrial: [
-        { text: "1. Ante la detección de un incendio activo en el sector de almacenamiento de contenedores, ¿cuál debe ser la primera acción según el protocolo?", choices: [
-          { text: "A) Intentar mover contenedores con maquinaria pesada.", correct: false, feedback: "Error. Riesgo de propagación y atrapamiento." },
-          { text: "B) Dar alarma inmediata, evacuar y notificar a bomberos.", correct: true, feedback: "Correcto. La vida es la prioridad máxima." },
-          { text: "C) Buscar el origen individualmente antes de informar.", correct: false, feedback: "Error. El fuego se propaga en segundos." }
-        ]},
-        { text: "2. En caso de un robo con utilización de armas de fuego, ¿qué conducta prioriza la seguridad?", choices: [
-          { text: "A) Enfrentar a los delincuentes con herramientas.", correct: false, feedback: "Error crítico. Riesgo letal innecesario." },
-          { text: "B) Mantener la calma y seguir instrucciones de asaltantes.", correct: true, feedback: "Correcto. Preservar la vida es el objetivo primordial." },
-          { text: "C) Activar alarmas sonoras con delincuentes presentes.", correct: false, feedback: "Riesgo. Puede generar reacción violenta." }
-        ]},
-        { text: "3. El CCTV detecta una intrusión perimetral nocturna. ¿Cuál es el procedimiento correcto?", choices: [
-          { text: "A) Abandonar el puesto para interceptar al intruso.", correct: false, feedback: "Error. Deja el centro de monitoreo desprotegido." },
-          { text: "B) Informar a supervisor y fuerzas de orden, manteniendo monitoreo.", correct: true, feedback: "Correcto. Coordinación y vigilancia continua." },
-          { text: "C) Esperar a confirmar la intención del intruso.", correct: false, feedback: "Error. La intrusión ya es un incidente." }
-        ]},
-        { text: "4. Ante un accidente grave con resultado de muerte, ¿medida inmediata?", choices: [
-          { text: "A) Trasladar el cuerpo para no afectar la operación.", correct: false, feedback: "Ilegal. Altera la escena del suceso." },
-          { text: "B) Paralizar faenas, aislar el sitio y notificar a Fiscalía/Policía.", correct: true, feedback: "Correcto. Cumplimiento legal y protocolo." },
-          { text: "C) Limpiar el área rápidamente.", correct: false, feedback: "Error grave. Obstrucción a la justicia." }
-        ]},
-        { text: "5. ¿Cuál es el objetivo primordial ante un incendio, robo o accidente fatal?", choices: [
-          { text: "A) Proteger la integridad física de las personas.", correct: true, feedback: "Correcto. Valor supremo de la Empresa." },
-          { text: "B) Asegurar la documentación.", correct: false, feedback: "Incorrecto. Lo material es secundario." },
-          { text: "C) Retomar operaciones rápido.", correct: false, feedback: "Incorrecto. La seguridad manda." }
-        ]},
-        { text: "6. Durante una emergencia química, ¿cuál es una de las responsabilidades específicas de los Guardias de Porterías de los Accesos Principales?", choices: [
-          { text: "A) Elaborar el informe de experiencia final junto con el COS.", correct: false, feedback: "Error. Esa responsabilidad corresponde al COS, no al guardia de portería." },
-          { text: "B) Realizar sobrevuelos para delimitar el área del derrame.", correct: false, feedback: "Error. Los sobrevuelos no son función de los guardias de accesos." },
-          { text: "C) Mantener las vías de salida expeditas para los móviles que acudan a la emergencia.", correct: true, feedback: "Correcto. Mantener las vías expeditas asegura la llegada rápida de emergencias." }
-        ]},
-        { text: "7. ¿Quién es el encargado de liderar en terreno la aplicación del protocolo de reacción frente a la emergencia?", choices: [
-          { text: "A) El Operador de Drone (R.P.A.).", correct: false, feedback: "Error. El operador de drone apoya visualmente pero no lidera en terreno." },
-          { text: "B) El Supervisor en turno.", correct: true, feedback: "Correcto. El Supervisor en turno es el responsable de liderar la aplicación del protocolo." },
-          { text: "C) El Centralista de turno.", correct: false, feedback: "Error. El centralista coordina desde el centro de control, no en terreno." }
-        ]},
-        { text: "8. Ante la sospecha de que la mochila sea un artefacto explosivo, ¿cuál debe ser la reacción inmediata de quien realiza el hallazgo?", choices: [
-          { text: "A) Abrir la mochila con cuidado para verificar si contiene cables o detonadores.", correct: false, feedback: "Error crítico. Manipular un objeto sospechoso puede causar una detonación." },
-          { text: "B) Trasladar el objeto rápidamente a una zona abierta fuera del edificio administrativo.", correct: false, feedback: "Error. Trasladar el objeto aumenta el riesgo de explosión." },
-          { text: "C) No manipular, mover ni trasladar el objeto en ninguna circunstancia e informar inmediatamente.", correct: true, feedback: "Correcto. Nunca manipular ni mover objetos sospechosos; informar inmediatamente." }
-        ]},
-        { text: "9. Una vez detectado el objeto sospechoso, ¿a quiénes se les debe dar aviso inmediato para activar el protocolo?", choices: [
-          { text: "A) Exclusivamente a Carabineros de Chile antes de informar internamente.", correct: false, feedback: "Error. Debe informarse primero a las autoridades internas antes de externos." },
-          { text: "B) Al Supervisor de Seguridad, al Administrador de Contratos de Securitas y al jefe de Turno.", correct: true, feedback: "Correcto. Aviso inmediato al Supervisor, Administrador de Securitas y jefe de Turno." },
-          { text: "C) Únicamente a los empleados de la gerencia para que comiencen a salir por su cuenta.", correct: false, feedback: "Error. Los empleados no deben evacuar por cuenta propia sin activar protocolo." }
-        ]},
-        { text: "10. ¿Cuál es una de las acciones preventivas y de control que debe ejecutarse en el sitio del hallazgo mientras llega el personal especializado?", choices: [
-          { text: "A) Intentar neutralizar el artefacto utilizando conocimientos básicos de seguridad.", correct: false, feedback: "Error grave. Nunca intentar neutralizar sin equipo especializado." },
-          { text: "B) Desbloquear todas las puertas, incluso las que no son vías de escape, para ventilar.", correct: false, feedback: "Error. Desbloquear puertas innecesarias puede comprometer la seguridad." },
-          { text: "C) Restringir el acceso al área y establecer un anillo de seguridad alrededor del objeto.", correct: true, feedback: "Correcto. Restringir acceso y formar anillo de seguridad es la acción preventiva adecuada." }
-        ]}
-      ],
-      cctv: [
-        { text: "1. Durante el monitoreo, observa a un individuo sospechoso merodeando el cierre perimetral con una herramienta de corte. ¿Qué acción de CCTV corresponde?", choices: [
-          { text: "A) Realizar zoom preventivo, iniciar grabación y alertar a la patrulla de seguridad externa.", correct: true, feedback: "Correcto. La detección temprana y alerta permite frustrar la intrusión." },
-          { text: "B) Ignorar si no ha ingresado aún al recinto para no generar falsas alarmas.", correct: false, feedback: "Error. El merodeo con herramientas es una amenaza inminente." }
-        ]},
-        { text: "2. Se reporta un incidente en una zona ciega de las cámaras fijas. ¿Cómo debe proceder el operador de CCTV?", choices: [
-          { text: "A) Direccionar el domo PTZ más cercano al área y coordinar con el personal de tierra para que sea sus ojos.", correct: true, feedback: "Correcto. La combinación de PTZ y personal de tierra es clave en zonas críticas." },
-          { text: "B) Informar que no hay visibilidad y esperar a que el incidente se desplace a una zona cubierta.", correct: false, feedback: "Error. El operador debe buscar activamente ángulos alternativos." }
-        ]},
-        { text: "3. En el análisis de imágenes post-evento, descubre que una cámara fue movida o tapada durante el turno anterior. ¿Cuál es el protocolo?", choices: [
-          { text: "A) Registrar en la bitácora, informar al jefe de seguridad y solicitar revisión técnica inmediata.", correct: true, feedback: "Correcto. El sabotaje de cámaras suele preceder a delitos mayores." },
-          { text: "B) Reubicarla mediante software sin informar si no ocurrió ningún robo.", correct: false, feedback: "Error. Se debe investigar por qué y quién alteró el sistema." }
-        ]}
-      ]
-    };
+<!-- THREE.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-    let state = { area: null, step: 0, points: 0, feedbackLog: [] };
+<script>
+// ═══════════════════════════════════════════
+//  CORE SIMULATOR STATE
+// ═══════════════════════════════════════════
+const SIM = {
+  armed: false,
+  paused: false,
+  nightMode: false,
+  rthActive: false,
+  flightMode: 'P-GPS',
+  modes: ['P-GPS','A-ATTI','S-SPORT'],
+  modeIdx: 0,
+  gimbalAngle: 0,
 
-    // ==================== PWA INTEGRADA (todo en un solo archivo) ====================
-    function registerPWA() {
-      // 1. Manifest dinámico
-      const manifestData = {
-        name: "Simulador FENIX GOLD",
-        short_name: "Fenix Gold",
-        start_url: ".",
-        display: "standalone",
-        background_color: "#0a0e1a",
-        theme_color: "#00d9ff",
-        orientation: "portrait-primary",
-        description: "Entrenamiento para decisiones críticas - Protocolos FENIX GOLD",
-        icons: [
-          { src: "https://via.placeholder.com/192x192/00d9ff/070a1a?text=🛡️", sizes: "192x192", type: "image/png" },
-          { src: "https://via.placeholder.com/512x512/00d9ff/070a1a?text=🛡️", sizes: "512x512", type: "image/png" }
-        ]
-      };
+  // drone physics
+  pos: { x: 0, y: 2, z: 0 },     // world pos (y = altitude)
+  vel: { x: 0, y: 0, z: 0 },
+  rot: { pitch: 0, roll: 0, yaw: 0 },
+  rotVel: { pitch: 0, roll: 0, yaw: 0 },
 
-      const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
-      const manifestURL = URL.createObjectURL(manifestBlob);
-      
-      const link = document.createElement('link');
-      link.rel = 'manifest';
-      link.href = manifestURL;
-      document.head.appendChild(link);
+  // inputs [-1..1]
+  input: { throttle: 0, yaw: 0, pitch: 0, roll: 0 },
 
-      // 2. Service Worker inline (sin archivo externo)
-      const swCode = `
-        const CACHE_NAME = 'fenix-gold-v1';
-        self.addEventListener('install', e => {
-          e.waitUntil(
-            caches.open(CACHE_NAME).then(cache => cache.addAll(['./']))
+  // derived
+  throttlePct: 0,
+  altitude: 0,
+  hSpeed: 0, vSpeed: 0,
+  heading: 0,
+  battery: 87, voltage: 25.2,
+  homePos: { x: 0, z: 0 },
+  flightTime: 0,
+  totalDist: 0,
+  lastPos: { x: 0, z: 0 },
+  wind: { x: 0.02, z: 0.01, speed: 2.1, dir: 45 },
+  rpmCurrent: 0,
+
+  // trail
+  trail: [],
+
+  // altitude hold
+  altHold: 2,
+  _jsThrottleActive: false,
+};
+
+// Keys
+const KEYS = {};
+window.addEventListener('keydown', e => {
+  KEYS[e.key.toLowerCase()] = true;
+  if (e.key === 'n' || e.key === 'N') toggleNight();
+  if (e.key === 'r' || e.key === 'R') triggerRTH();
+  if (e.key === 'c' || e.key === 'C') cycleMode();
+  if (e.key === ' ') { e.preventDefault(); toggleArm(); }
+});
+window.addEventListener('keyup', e => { KEYS[e.key.toLowerCase()] = false; });
+
+// ═══════════════════════════════════════════
+//  THREE.JS SCENE
+// ═══════════════════════════════════════════
+let renderer, scene, camera, droneMesh, rotorMeshes = [], terrainMesh;
+let sunLight, ambientLight, hemiLight;
+let skyDome, stars, cityLights;
+let shadowPlane;
+let clock;
+
+function initThree() {
+  // Renderer
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.0;
+  document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+  scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x88bbcc, 0.004);
+
+  clock = new THREE.Clock();
+
+  // Camera — follows drone from behind-above
+  camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 3000);
+  camera.position.set(0, 8, 18);
+
+  // Lighting
+  ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+  scene.add(ambientLight);
+
+  hemiLight = new THREE.HemisphereLight(0x87ceeb, 0x4a7c4a, 0.6);
+  scene.add(hemiLight);
+
+  sunLight = new THREE.DirectionalLight(0xfff5e0, 1.2);
+  sunLight.position.set(80, 120, -60);
+  sunLight.castShadow = true;
+  sunLight.shadow.camera.near = 0.1;
+  sunLight.shadow.camera.far = 500;
+  sunLight.shadow.camera.left = -80;
+  sunLight.shadow.camera.right = 80;
+  sunLight.shadow.camera.top = 80;
+  sunLight.shadow.camera.bottom = -80;
+  sunLight.shadow.mapSize.width = 2048;
+  sunLight.shadow.mapSize.height = 2048;
+  sunLight.shadow.bias = -0.001;
+  scene.add(sunLight);
+
+  buildSky();
+  buildTerrain();
+  buildDrone();
+  buildCityLights();
+  buildStars();
+  buildHomeMarker();
+  buildObstacleTowers();
+
+  window.addEventListener('resize', onResize);
+}
+
+// ── SKY ──
+function buildSky() {
+  // Sky gradient dome
+  const skyGeo = new THREE.SphereGeometry(1500, 32, 16);
+  const skyMat = new THREE.ShaderMaterial({
+    side: THREE.BackSide,
+    uniforms: {
+      topColor: { value: new THREE.Color(0x1a6fb5) },
+      bottomColor: { value: new THREE.Color(0x9cd4f0) },
+      nightTop: { value: new THREE.Color(0x020510) },
+      nightBottom: { value: new THREE.Color(0x0a1020) },
+      night: { value: 0.0 }
+    },
+    vertexShader: `
+      varying vec3 vPos;
+      void main() { vPos = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }
+    `,
+    fragmentShader: `
+      uniform vec3 topColor, bottomColor, nightTop, nightBottom;
+      uniform float night;
+      varying vec3 vPos;
+      void main() {
+        float t = clamp(vPos.y / 1200.0, 0.0, 1.0);
+        vec3 day = mix(bottomColor, topColor, t);
+        vec3 ngt = mix(nightBottom, nightTop, t);
+        gl_FragColor = vec4(mix(day, ngt, night), 1.0);
+      }
+    `
+  });
+  skyDome = new THREE.Mesh(skyGeo, skyMat);
+  scene.add(skyDome);
+}
+
+// ── UTILIDADES DE RUIDO (compartidas por terreno, montañas y vegetación) ──
+function noise2D(x, z, freq, amp) {
+  return Math.sin(x * freq + 0.3) * Math.cos(z * freq * 0.9 + 0.7) * amp
+       + Math.sin(x * freq * 2.1 + 1.2) * Math.sin(z * freq * 1.8 + 0.5) * amp * 0.4
+       + Math.cos(x * freq * 4.3 - 0.8) * Math.cos(z * freq * 3.7 + 1.1) * amp * 0.2;
+}
+
+// Ruido de baja frecuencia que define "manchas" de bioma: bosque, pradera, rocoso, árido
+function biomeNoise(x, z) {
+  return Math.sin(x * 0.012 + 1.7) * Math.cos(z * 0.009 - 0.4)
+       + Math.sin(x * 0.021 - 0.6) * Math.sin(z * 0.017 + 1.1) * 0.6;
+}
+
+// ── TERRAIN ──
+function buildTerrain() {
+  const W = 1000, H = 1000;
+  const SIZE = 2000;
+
+  const geo = new THREE.PlaneGeometry(SIZE, SIZE, W - 1, H - 1);
+  geo.rotateX(-Math.PI / 2);
+
+  const pos = geo.attributes.position;
+  const heights = new Float32Array(W * H);
+
+  for (let i = 0; i < W; i++) {
+    for (let j = 0; j < H; j++) {
+      const x = (i / W) - 0.5, z = (j / H) - 0.5;
+      let h = noise2D(x, z, 4, 18)
+            + noise2D(x, z, 8, 6)
+            + noise2D(x, z, 16, 2)
+            + noise2D(x, z, 32, 0.8);
+      // Flatten center (landing zone)
+      const dist = Math.sqrt(x * x + z * z);
+      h *= Math.min(dist * 6, 1.0);
+      h = Math.max(h, 0);
+      heights[i + j * W] = h;
+    }
+  }
+
+  for (let i = 0; i < pos.count; i++) {
+    pos.setY(i, heights[i] || 0);
+  }
+  pos.needsUpdate = true;
+  geo.computeVertexNormals();
+
+  // Vertex colors realistas — combinan altura + bioma (bosque/pradera/rocoso/árido)
+  const colors = new Float32Array(pos.count * 3);
+  for (let i = 0; i < pos.count; i++) {
+    const h = pos.getY(i);
+    const wx = pos.getX(i), wz = pos.getZ(i);
+    const biome = biomeNoise(wx, wz);
+    const jitter = (Math.sin(wx * 12.9898 + wz * 78.233) * 43758.5453) % 1; // pseudo-aleatorio determinista
+    const jr = jitter * 0.04;
+
+    let r, g, b;
+    if (h > 15) {                      // picos — roca/nieve, independiente del bioma
+      r = 0.70; g = 0.67; b = 0.62;
+    } else if (h > 10) {                // zona alta — roca/tierra
+      r = 0.55; g = 0.50; b = 0.35;
+    } else if (biome > 0.55) {          // BOSQUE — verde denso y oscuro
+      r = 0.16; g = 0.32; b = 0.14;
+    } else if (biome > 0.0) {           // PRADERA — verde medio
+      r = 0.32; g = 0.48; b = 0.22;
+    } else if (biome > -0.55) {         // ROCOSO — gris-marrón
+      r = 0.46; g = 0.42; b = 0.34;
+    } else {                            // ÁRIDO/TIERRA — tostado/arena
+      r = 0.62; g = 0.50; b = 0.34;
+    }
+
+    colors[i * 3]     = Math.max(0, Math.min(1, r + jr));
+    colors[i * 3 + 1] = Math.max(0, Math.min(1, g + jr));
+    colors[i * 3 + 2] = Math.max(0, Math.min(1, b + jr));
+  }
+  geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+  const mat = new THREE.MeshLambertMaterial({
+    vertexColors: true,
+  });
+
+  terrainMesh = new THREE.Mesh(geo, mat);
+  terrainMesh.receiveShadow = true;
+  terrainMesh.position.set(0, 0, 0);
+  scene.add(terrainMesh);
+
+  // Store heights for altitude calculation
+  terrainMesh.userData.heights = heights;
+  terrainMesh.userData.W = W;
+  terrainMesh.userData.SIZE = SIZE;
+}
+
+function getTerrainHeight(x, z) {
+  if (!terrainMesh) return 0;
+  const { heights, W, SIZE } = terrainMesh.userData;
+  const u = (x / SIZE + 0.5) * (W - 1);
+  const v = (z / SIZE + 0.5) * (W - 1);
+  const iu = Math.min(Math.max(Math.floor(u), 0), W - 2);
+  const iv = Math.min(Math.max(Math.floor(v), 0), W - 2);
+  const fu = u - iu, fv = v - iv;
+  const h00 = heights[iu + iv * W] || 0;
+  const h10 = heights[(iu + 1) + iv * W] || 0;
+  const h01 = heights[iu + (iv + 1) * W] || 0;
+  const h11 = heights[(iu + 1) + (iv + 1) * W] || 0;
+  return h00 * (1 - fu) * (1 - fv)
+       + h10 * fu * (1 - fv)
+       + h01 * (1 - fu) * fv
+       + h11 * fu * fv;
+}
+
+// ── DRONE ──
+function buildDrone() {
+  const group = new THREE.Group();
+  const S = 2.2; // escala global del dron — más grande y visible
+
+  // Paleta estilo dron plegable de gama alta: gris claro / antracita / naranja
+  const COL_TOP    = 0xcdcfd2; // carcasa superior — gris claro
+  const COL_SIDE   = 0x999b9e; // chasis lateral — gris medio
+  const COL_DARK   = 0x232323; // negro/antracita — motores, sensores, hélices
+  const COL_ARM    = 0xb6b8bb; // brazos — gris claro
+  const COL_ACCENT = 0xff7a1a; // naranja — puntas de hélice y detalles
+  const COL_LENS   = 0x33405a; // cristal de lente — azulado
+
+  // ── CUERPO CENTRAL (bitono, como una carcasa plegable real) ──
+  // Frente del dron = -Z (coincide con la cámara que persigue desde +Z)
+  const topGeo = new THREE.BoxGeometry(0.62 * S, 0.16 * S, 0.92 * S);
+  const topMat = new THREE.MeshPhongMaterial({ color: COL_TOP, specular: 0x777777, shininess: 70 });
+  const top = new THREE.Mesh(topGeo, topMat);
+  top.position.set(0, 0.08 * S, -0.04 * S);
+  top.castShadow = true;
+  group.add(top);
+
+  const bodyGeo = new THREE.BoxGeometry(0.46 * S, 0.16 * S, 0.74 * S);
+  const bodyMat = new THREE.MeshPhongMaterial({ color: COL_SIDE, specular: 0x555555, shininess: 50 });
+  const body = new THREE.Mesh(bodyGeo, bodyMat);
+  body.position.set(0, -0.06 * S, -0.02 * S);
+  body.castShadow = true;
+  group.add(body);
+
+  // Nariz frontal estrechada (forma aerodinámica)
+  const noseGeo = new THREE.BoxGeometry(0.34 * S, 0.14 * S, 0.18 * S);
+  const noseMat = new THREE.MeshPhongMaterial({ color: COL_TOP, specular: 0x777777, shininess: 70 });
+  const nose = new THREE.Mesh(noseGeo, noseMat);
+  nose.position.set(0, 0.05 * S, -0.48 * S);
+  group.add(nose);
+
+  // Rejillas de ventilación superiores (detalle oscuro, parte trasera)
+  for (let i = -1; i <= 1; i += 2) {
+    const ventGeo = new THREE.BoxGeometry(0.13 * S, 0.02 * S, 0.22 * S);
+    const ventMat = new THREE.MeshPhongMaterial({ color: COL_DARK });
+    const vent = new THREE.Mesh(ventGeo, ventMat);
+    vent.position.set(i * 0.14 * S, 0.165 * S, 0.22 * S);
+    group.add(vent);
+  }
+
+  // Sensores binoculares frontales (visión de obstáculos)
+  const eyeGeo = new THREE.CylinderGeometry(0.045 * S, 0.045 * S, 0.05 * S, 12);
+  const eyeMat = new THREE.MeshPhongMaterial({ color: COL_DARK, specular: 0xaaaaaa, shininess: 220 });
+  [-0.15, 0.15].forEach(ex => {
+    const eye = new THREE.Mesh(eyeGeo, eyeMat);
+    eye.rotation.x = Math.PI / 2;
+    eye.position.set(ex * S, 0.04 * S, -0.55 * S);
+    group.add(eye);
+  });
+
+  // Sensor superior pequeño (radar/visión ascendente)
+  const topSensorGeo = new THREE.CylinderGeometry(0.04 * S, 0.04 * S, 0.03 * S, 10);
+  const topSensor = new THREE.Mesh(topSensorGeo, eyeMat);
+  topSensor.position.set(0, 0.165 * S, -0.3 * S);
+  group.add(topSensor);
+
+  // ── BRAZOS PLEGABLES (4) — parten desde esquinas del cuerpo hacia las aspas ──
+  // Cuerpo top: 0.62 * S ancho, 0.92 * S largo → esquinas ≈ (±0.28, ±0.40) * S
+  const armPositions = [
+    { x:  1.0, z:  0.85, front: false, cx:  0.28, cz:  0.40 }, // trasero-derecho
+    { x: -1.0, z:  0.85, front: false, cx: -0.28, cz:  0.40 }, // trasero-izquierdo
+    { x:  1.0, z: -0.85, front: true,  cx:  0.28, cz: -0.40 }, // delantero-derecho
+    { x: -1.0, z: -0.85, front: true,  cx: -0.28, cz: -0.40 }, // delantero-izquierdo
+  ];
+
+  armPositions.forEach((ap) => {
+    // Brazo tubular: desde esquina del cuerpo (cx,cz) hasta motor (x,z)
+    // Usamos un Group pivotado en la esquina del cuerpo para orientar correctamente
+    const startX = ap.cx * S, startZ = ap.cz * S;
+    const endX   = ap.x  * S, endZ   = ap.z  * S;
+    const dx = endX - startX, dz = endZ - startZ;
+    const len = Math.sqrt(dx * dx + dz * dz);
+
+    // El cilindro Three.js es vertical (eje Y). Lo metemos en un grupo:
+    // 1) rotamos el cilindro 90° en X para que quede horizontal (eje Z)
+    // 2) rotamos el grupo en Y para apuntar de esquina a rotor
+    const armGroup = new THREE.Group();
+    armGroup.position.set(startX, 0, startZ);
+    armGroup.rotation.y = Math.atan2(dx, dz);
+
+    const armGeo = new THREE.CylinderGeometry(0.05 * S, 0.04 * S, len, 8);
+    const armMat = new THREE.MeshPhongMaterial({ color: COL_ARM, specular: 0x666666, shininess: 50 });
+    const arm = new THREE.Mesh(armGeo, armMat);
+    arm.rotation.x = Math.PI / 2;
+    arm.position.set(0, 0, len / 2);
+    arm.castShadow = true;
+    armGroup.add(arm);
+    group.add(armGroup);
+
+    // Refuerzo en la unión brazo-cuerpo (en la esquina del cuerpo)
+    const joinGeo = new THREE.CylinderGeometry(0.09 * S, 0.09 * S, 0.15 * S, 8);
+    const joinMat = new THREE.MeshPhongMaterial({ color: COL_SIDE });
+    const join = new THREE.Mesh(joinGeo, joinMat);
+    join.position.set(startX, 0, startZ);
+    group.add(join);
+
+    // Motor housing — negro/antracita
+    const motorGeo = new THREE.CylinderGeometry(0.155 * S, 0.14 * S, 0.12 * S, 12);
+    const motorMat = new THREE.MeshPhongMaterial({ color: COL_DARK, specular: 0x888888, shininess: 90 });
+    const motor = new THREE.Mesh(motorGeo, motorMat);
+    motor.position.set(ap.x * S, 0.06 * S, ap.z * S);
+    motor.castShadow = true;
+    group.add(motor);
+
+    // Tapa motor (anillo superior brillante)
+    const topRingGeo = new THREE.CylinderGeometry(0.14 * S, 0.14 * S, 0.03 * S, 12);
+    const topRingMat = new THREE.MeshPhongMaterial({ color: 0x3a3a3a, specular: 0xffffff, shininess: 200 });
+    const topRing = new THREE.Mesh(topRingGeo, topRingMat);
+    topRing.position.set(ap.x * S, 0.135 * S, ap.z * S);
+    group.add(topRing);
+
+    // Pata de aterrizaje colgante con pie de punta naranja
+    const legGeo = new THREE.CylinderGeometry(0.025 * S, 0.02 * S, 0.22 * S, 6);
+    const legMat = new THREE.MeshPhongMaterial({ color: COL_SIDE });
+    const leg = new THREE.Mesh(legGeo, legMat);
+    leg.position.set(ap.x * S, -0.06 * S, ap.z * S);
+    leg.rotation.x = ap.front ? -0.15 : 0.15;
+    group.add(leg);
+    const footGeo = new THREE.SphereGeometry(0.035 * S, 8, 8);
+    const footMat = new THREE.MeshPhongMaterial({ color: COL_ACCENT });
+    const foot = new THREE.Mesh(footGeo, footMat);
+    foot.position.set(ap.x * S, -0.165 * S, ap.z * S + (ap.front ? -0.03 : 0.03) * S);
+    group.add(foot);
+
+    // Hélice — 2 palas negras con punta naranja (estilo realista)
+    [0, Math.PI / 2].forEach((rotOff, bladeIdx) => {
+      const bladeGroup = new THREE.Group();
+
+      const bladeMainGeo = new THREE.BoxGeometry(0.62 * S, 0.022 * S, 0.095 * S);
+      const bladeMainMat = new THREE.MeshPhongMaterial({ color: COL_DARK, specular: 0x333333, shininess: 40, transparent: true, opacity: 0.92 });
+      const bladeMain = new THREE.Mesh(bladeMainGeo, bladeMainMat);
+      bladeMain.position.set(0, 0, 0);
+      bladeGroup.add(bladeMain);
+
+      // Punta naranja en ambos extremos de la pala
+      const tipGeo = new THREE.BoxGeometry(0.1 * S, 0.022 * S, 0.09 * S);
+      const tipMat = new THREE.MeshPhongMaterial({ color: COL_ACCENT, specular: 0x333333, shininess: 40 });
+      const tip1 = new THREE.Mesh(tipGeo, tipMat);
+      tip1.position.set(0.31 * S, 0, 0);
+      bladeGroup.add(tip1);
+      const tip2 = new THREE.Mesh(tipGeo, tipMat);
+      tip2.position.set(-0.31 * S, 0, 0);
+      bladeGroup.add(tip2);
+
+      bladeGroup.rotation.y = rotOff;
+      bladeGroup.position.set(ap.x * S, 0.165 * S, ap.z * S);
+      group.add(bladeGroup);
+      rotorMeshes.push(bladeGroup);
+    });
+
+    // Disco de blur de rotor
+    const discGeo = new THREE.CircleGeometry(0.42 * S, 20);
+    const discMat = new THREE.MeshBasicMaterial({
+      color: 0x2a2a2a, transparent: true, opacity: 0.0, side: THREE.DoubleSide
+    });
+    const disc = new THREE.Mesh(discGeo, discMat);
+    disc.rotation.x = -Math.PI / 2;
+    disc.position.set(ap.x * S, 0.17 * S, ap.z * S);
+    group.add(disc);
+    rotorMeshes[rotorMeshes.length - 1].userData.disc = disc;
+    rotorMeshes[rotorMeshes.length - 2].userData.disc = disc;
+  });
+
+  // LEDs de navegación — frente = -Z (rojo/verde), cola = +Z (blanco)
+  const ledGeo = new THREE.SphereGeometry(0.05 * S, 8, 8);
+  const ledDefs = [
+    [ 0.95 * S, -0.04 * S, -0.85 * S, 0x22ff44],  // Front-right: verde (estándar aviación)
+    [-0.95 * S, -0.04 * S, -0.85 * S, 0xff2222],  // Front-left: rojo
+    [ 0.95 * S, -0.04 * S,  0.85 * S, 0xffffff],  // Rear-right: blanco
+    [-0.95 * S, -0.04 * S,  0.85 * S, 0xffffff],  // Rear-left: blanco
+  ];
+  ledDefs.forEach(([x, y, z, c]) => {
+    const led = new THREE.Mesh(ledGeo, new THREE.MeshBasicMaterial({ color: c }));
+    led.position.set(x, y, z);
+    const pl = new THREE.PointLight(c, 0.5, 2.5);
+    pl.position.set(x, y, z);
+    group.add(led, pl);
+  });
+
+  // Sensor de visión inferior (obstacle avoidance)
+  const oaGeo = new THREE.BoxGeometry(0.18 * S, 0.06 * S, 0.12 * S);
+  const oaMat = new THREE.MeshPhongMaterial({ color: COL_DARK, specular: 0x777777, shininess: 150 });
+  const oaSensor = new THREE.Mesh(oaGeo, oaMat);
+  oaSensor.position.set(0, -0.14 * S, 0.05 * S);
+  group.add(oaSensor);
+
+  // ── GIMBAL / CÁMARA PRINCIPAL (bulto frontal prominente, como en la foto) ──
+  const gimbalGroup = new THREE.Group();
+  gimbalGroup.position.set(0, -0.16 * S, -0.42 * S);
+
+  // Soporte/horquilla del gimbal
+  const gimbalRingGeo = new THREE.TorusGeometry(0.1 * S, 0.02 * S, 8, 16);
+  const gimbalMat = new THREE.MeshPhongMaterial({ color: 0x2c2c2c, specular: 0x888888, shininess: 90 });
+  const gimbalRing = new THREE.Mesh(gimbalRingGeo, gimbalMat);
+  gimbalRing.rotation.y = Math.PI / 2;
+  gimbalGroup.add(gimbalRing);
+
+  // Cuerpo de la cámara (negro, prominente)
+  const camBodyGeo = new THREE.BoxGeometry(0.2 * S, 0.15 * S, 0.16 * S);
+  const camBodyMat = new THREE.MeshPhongMaterial({ color: 0x161616, specular: 0x777777, shininess: 70 });
+  const camBody = new THREE.Mesh(camBodyGeo, camBodyMat);
+  gimbalGroup.add(camBody);
+
+  // Anillo de acento naranja alrededor del objetivo (detalle estético)
+  const accentRingGeo = new THREE.TorusGeometry(0.062 * S, 0.008 * S, 6, 16);
+  const accentRingMat = new THREE.MeshPhongMaterial({ color: COL_ACCENT });
+  const accentRing = new THREE.Mesh(accentRingGeo, accentRingMat);
+  accentRing.position.set(0, 0, -0.1 * S);
+  gimbalGroup.add(accentRing);
+
+  // Lente de cámara
+  const lensGeo = new THREE.CylinderGeometry(0.06 * S, 0.065 * S, 0.08 * S, 16);
+  const lensMat = new THREE.MeshPhongMaterial({ color: 0x080808, specular: 0xffffff, shininess: 300 });
+  const lens = new THREE.Mesh(lensGeo, lensMat);
+  lens.rotation.x = Math.PI / 2;
+  lens.position.set(0, 0, -0.1 * S);
+  gimbalGroup.add(lens);
+
+  // Cristal de lente (con reflejo azulado)
+  const glassGeo = new THREE.CircleGeometry(0.05 * S, 16);
+  const glassMat = new THREE.MeshPhongMaterial({ color: COL_LENS, specular: 0xffffff, shininess: 600, transparent: true, opacity: 0.85 });
+  const glass = new THREE.Mesh(glassGeo, glassMat);
+  glass.rotation.y = Math.PI;
+  glass.position.set(0, 0, -0.142 * S);
+  gimbalGroup.add(glass);
+
+  group.add(gimbalGroup);
+  group.userData.gimbalGroup = gimbalGroup;
+
+  droneMesh = group;
+
+  // Shadow circle on ground
+  const sGeo = new THREE.CircleGeometry(1.2, 20);
+  const sMat = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.4 });
+  shadowPlane = new THREE.Mesh(sGeo, sMat);
+  shadowPlane.rotation.x = -Math.PI / 2;
+  scene.add(shadowPlane);
+
+  scene.add(droneMesh);
+}
+
+// ── CITY LIGHTS (night) ──
+function buildCityLights() {
+  cityLights = new THREE.Group();
+  cityLights.visible = false;
+
+  const geo = new THREE.SphereGeometry(0.4, 4, 4);
+  const colors = [0xffaa44, 0xffffff, 0x4488ff, 0xff6644, 0xffee99];
+
+  for (let i = 0; i < 200; i++) {
+    const x = (Math.random() - 0.5) * 500;
+    const z = (Math.random() - 0.5) * 500;
+    const dist = Math.sqrt(x * x + z * z);
+    if (dist < 40) continue;
+    const h = getTerrainHeight(x, z);
+    const mat = new THREE.MeshBasicMaterial({ color: colors[Math.floor(Math.random() * colors.length)] });
+    const m = new THREE.Mesh(geo, mat);
+    m.position.set(x, h + 0.5, z);
+    cityLights.add(m);
+
+    if (i % 8 === 0) {
+      const pl = new THREE.PointLight(colors[Math.floor(Math.random() * colors.length)], 0.3, 8);
+      pl.position.copy(m.position);
+      cityLights.add(pl);
+    }
+  }
+  scene.add(cityLights);
+}
+
+// ── STARS ──
+function buildStars() {
+  const geo = new THREE.BufferGeometry();
+  const verts = [];
+  for (let i = 0; i < 3000; i++) {
+    const r = 1200;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.random() * Math.PI * 0.5;
+    verts.push(
+      r * Math.sin(phi) * Math.cos(theta),
+      r * Math.cos(phi) + 100,
+      r * Math.sin(phi) * Math.sin(theta)
+    );
+  }
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
+  stars = new THREE.Points(geo, new THREE.PointsMaterial({
+    color: 0xffffff, size: 1.5, transparent: true, opacity: 0
+  }));
+  scene.add(stars);
+}
+
+// ── OBSTACLE TOWERS ──
+const TOWERS = []; // store bounding data for collision hints
+
+function buildObstacleTowers() {
+  // 7 torres en posiciones distribuidas, distintas alturas y estilos
+  const towerDefs = [
+    { x:  35, z:  25, h: 22, r: 1.2, style: 'lattice' },
+    { x: -42, z:  18, h: 30, r: 1.5, style: 'solid'   },
+    { x:  20, z: -38, h: 18, r: 1.0, style: 'lattice' },
+    { x: -25, z: -30, h: 26, r: 1.3, style: 'solid'   },
+    { x:  55, z: -12, h: 35, r: 1.8, style: 'lattice' },
+    { x: -60, z:  40, h: 20, r: 1.1, style: 'solid'   },
+    { x:  10, z:  52, h: 28, r: 1.4, style: 'lattice' },
+  ];
+
+  towerDefs.forEach(td => {
+    const group = new THREE.Group();
+    const gh = getTerrainHeight(td.x, td.z);
+
+    if (td.style === 'solid') {
+      // Torre sólida tipo edificio/estructura industrial
+      const tGeo = new THREE.BoxGeometry(td.r * 2.5, td.h, td.r * 2.5);
+      const tMat = new THREE.MeshPhongMaterial({
+        color: 0x555566, specular: 0x222233, shininess: 40
+      });
+      const tower = new THREE.Mesh(tGeo, tMat);
+      tower.position.set(0, td.h / 2, 0);
+      tower.castShadow = true; tower.receiveShadow = true;
+      group.add(tower);
+
+      // Ventanas (cajas pequeñas)
+      const winMat = new THREE.MeshBasicMaterial({ color: 0xffffaa, transparent: true, opacity: 0.6 });
+      for (let f = 0; f < 4; f++) {
+        for (let w = 2; w < Math.floor(td.h / 3); w++) {
+          const winGeo = new THREE.BoxGeometry(0.3, 0.5, 0.05);
+          const win = new THREE.Mesh(winGeo, winMat);
+          const angle = (f / 4) * Math.PI * 2;
+          win.position.set(
+            Math.cos(angle) * (td.r * 1.26),
+            w * 3,
+            Math.sin(angle) * (td.r * 1.26)
           );
-        });
-        self.addEventListener('fetch', e => {
-          e.respondWith(
-            caches.match(e.request).then(response => response || fetch(e.request))
-          );
-        });
-      `;
-
-      const swBlob = new Blob([swCode], { type: 'application/javascript' });
-      const swURL = URL.createObjectURL(swBlob);
-
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register(swURL)
-          .then(() => console.log('✅ Simulador instalado como APP de teléfono'))
-          .catch(err => console.log('PWA error:', err));
-      }
-    }
-
-    // ==================== LÓGICA DEL SIMULADOR (sin cambios) ====================
-    function init() {
-      // Partículas
-      const container = document.getElementById('particles');
-      for (let i = 0; i < 30; i++) {
-        const p = document.createElement('div');
-        p.className = 'particle';
-        p.style.left = Math.random() * 100 + '%';
-        p.style.top = Math.random() * 100 + '%';
-        p.style.animationDelay = Math.random() * 5 + 's';
-        container.appendChild(p);
+          win.rotation.y = angle;
+          group.add(win);
+        }
       }
 
-      document.querySelectorAll('.area-card').forEach(card => {
-        card.onclick = () => startApp(card.dataset.area);
+      // Antena encima
+      const antGeo = new THREE.CylinderGeometry(0.06, 0.06, td.h * 0.25, 6);
+      const antMat = new THREE.MeshPhongMaterial({ color: 0x888888 });
+      const ant = new THREE.Mesh(antGeo, antMat);
+      ant.position.set(0, td.h + td.h * 0.125, 0);
+      group.add(ant);
+
+    } else {
+      // Torre de celosía (lattice) — 4 columnas + travesaños
+      const colMat = new THREE.MeshPhongMaterial({ color: 0xcc6600, specular: 0x442200, shininess: 30 });
+      const cols = [
+        [ td.r, 0,  td.r],
+        [-td.r, 0,  td.r],
+        [ td.r, 0, -td.r],
+        [-td.r, 0, -td.r]
+      ];
+      cols.forEach(([cx, , cz]) => {
+        const colGeo = new THREE.CylinderGeometry(0.12, 0.18, td.h, 6);
+        const col = new THREE.Mesh(colGeo, colMat);
+        col.position.set(cx, td.h / 2, cz);
+        col.castShadow = true;
+        group.add(col);
       });
 
-      document.getElementById('btn-reset').onclick = () => location.reload();
-      document.getElementById('btn-face-analysis').onclick = toggleFace;
-
-      registerPWA();   // ← Activa la modalidad de APP
-    }
-
-    function startApp(areaId) {
-      state.area = areaId;
-      state.step = 0;
-      state.points = 0;
-      state.feedbackLog = [];
-      document.getElementById('view-area').style.display = 'none';
-      document.getElementById('view-play').style.display = 'block';
-      renderStep();
-    }
-
-    function renderStep() {
-      const data = scenarios[state.area][state.step];
-      document.getElementById('node-text').innerText = data.text;
-      const choicesGrid = document.getElementById('choices');
-      choicesGrid.innerHTML = '';
-      data.choices.forEach(c => {
-        const btn = document.createElement('button');
-        btn.className = 'choice-btn';
-        btn.innerText = c.text;
-        btn.onclick = () => handleChoice(c);
-        choicesGrid.appendChild(btn);
-      });
-    }
-
-    function handleChoice(c) {
-      state.feedbackLog.push({ q: scenarios[state.area][state.step].text, a: c.text, f: c.feedback });
-      if (c.correct) {
-        state.points += (100 / scenarios[state.area].length);
-        updateUI();
-      } else {
-        showModal("Protocolo Incorrecto", c.feedback);
-      }
-      state.step++;
-      if (state.step < scenarios[state.area].length) {
-        renderStep();
-      } else {
-        finish();
-      }
-    }
-
-    function updateUI() {
-      const score = Math.round(state.points);
-      document.getElementById('dim-procedural').innerText = score;
-      document.getElementById('dim-security').innerText = score;
-      document.getElementById('dim-comms').innerText = score;
-      document.getElementById('partial-score').innerText = score + '%';
-      document.getElementById('progress-bar-fill').style.width = score + '%';
-    }
-
-    function finish() {
-      document.getElementById('view-play').style.display = 'none';
-      document.getElementById('view-report').style.display = 'block';
-      document.getElementById('final-score-display').innerText = Math.round(state.points) + '%';
-    }
-
-    function downloadPDF() {
-      const name = document.getElementById('user-name').value || "Sin Nombre";
-      const rut = document.getElementById('user-rut').value || "Sin RUT";
-      document.getElementById('pdf-user-name').innerText = name;
-      document.getElementById('pdf-user-rut').innerText = rut;
-      document.getElementById('pdf-date').innerText = new Date().toLocaleString();
-      document.getElementById('pdf-final-score').innerText = Math.round(state.points) + '%';
-
-      const fbContent = document.getElementById('pdf-feedback-content');
-      fbContent.innerHTML = '';
-      state.feedbackLog.forEach((item, i) => {
-        fbContent.innerHTML += `
-          <div class="pdf-item">
-            <p><strong>P${i+1}:</strong> ${item.q}</p>
-            <p><strong>Tu Respuesta:</strong> ${item.a}</p>
-            <p><strong>Feedback:</strong> ${item.f}</p>
-          </div>
-        `;
-      });
-
-      const element = document.getElementById('pdf-report-template');
-      element.style.display = 'block';
-      const opt = { margin: 1, filename: `Reporte_Seguridad_${name}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } };
-      html2pdf().set(opt).from(element).save().then(() => { element.style.display = 'none'; });
-    }
-
-    function toggleFace() {
-      const mod = document.getElementById('face-analysis-module');
-      if (mod.style.display === 'none') {
-        mod.style.display = 'block';
-        navigator.mediaDevices.getUserMedia({ video: true }).then(s => {
-          document.getElementById('face-video').srcObject = s;
+      // Travesaños horizontales cada 4m
+      const crossMat = new THREE.MeshPhongMaterial({ color: 0xaa5500 });
+      for (let y = 2; y < td.h; y += 4) {
+        [[td.r, td.r, -td.r, td.r], [td.r, -td.r, -td.r, -td.r],
+         [td.r, td.r, td.r, -td.r], [-td.r, td.r, -td.r, -td.r]].forEach(([x1, z1, x2, z2]) => {
+          const len = Math.sqrt((x2-x1)**2 + (z2-z1)**2);
+          const cGeo = new THREE.CylinderGeometry(0.05, 0.05, len, 4);
+          const c = new THREE.Mesh(cGeo, crossMat);
+          c.rotation.z = Math.PI / 2;
+          c.rotation.y = Math.atan2(z2-z1, x2-x1);
+          c.position.set((x1+x2)/2, y, (z1+z2)/2);
+          group.add(c);
         });
-      } else {
-        mod.style.display = 'none';
       }
+
+      // Plataforma en cima
+      const platGeo = new THREE.CylinderGeometry(td.r * 1.6, td.r * 1.4, 0.3, 8);
+      const platMat = new THREE.MeshPhongMaterial({ color: 0x444444 });
+      const plat = new THREE.Mesh(platGeo, platMat);
+      plat.position.set(0, td.h + 0.15, 0);
+      group.add(plat);
     }
 
-    function showModal(title, msg) {
-      document.getElementById('modal-title').innerText = title;
-      document.getElementById('modal-message').innerText = msg;
-      document.getElementById('notification-modal').classList.add('active');
-    }
+    // LUZ DE PELIGRO — baliza roja parpadeante en la cima
+    const beaconGeo = new THREE.SphereGeometry(0.18, 8, 8);
+    const beaconMat = new THREE.MeshBasicMaterial({ color: 0xff2200 });
+    const beacon = new THREE.Mesh(beaconGeo, beaconMat);
+    beacon.position.set(0, td.h + 0.5, 0);
+    group.add(beacon);
+    const beaconLight = new THREE.PointLight(0xff2200, 1.5, 12);
+    beaconLight.position.set(0, td.h + 0.5, 0);
+    group.add(beaconLight);
+    beacon.userData.beaconLight = beaconLight;
+    beacon.userData.isBeacon = true;
 
-    function hideModal() {
-      document.getElementById('notification-modal').classList.remove('active');
-    }
+    group.position.set(td.x, gh, td.z);
+    scene.add(group);
 
-    window.onload = init;
-  </script>
+    // Guardar datos para HUD de proximidad
+    TOWERS.push({ x: td.x, z: td.z, h: gh + td.h, r: td.r + 2 });
+  });
+}
+
+// ── HOME MARKER ──
+function buildHomeMarker() {
+  const geo = new THREE.ConeGeometry(0.3, 0.8, 4);
+  const mat = new THREE.MeshBasicMaterial({ color: 0x00ff41, wireframe: false });
+  const marker = new THREE.Mesh(geo, mat);
+  marker.position.set(0, 0.4, 0);
+  marker.rotation.y = Math.PI / 4;
+  scene.add(marker);
+
+  const ringGeo = new THREE.RingGeometry(0.8, 1.0, 16);
+  const ringMat = new THREE.MeshBasicMaterial({ color: 0x00ff41, side: THREE.DoubleSide, transparent: true, opacity: 0.6 });
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.rotation.x = -Math.PI / 2;
+  ring.position.y = 0.05;
+  scene.add(ring);
+}
+
+// ── TRAIL ──
+let trailPoints = [];
+let trailLine;
+
+function updateTrail() {
+  if (trailPoints.length > 200) trailPoints.shift();
+  trailPoints.push(new THREE.Vector3(SIM.pos.x, SIM.pos.y, SIM.pos.z));
+
+  if (trailLine) scene.remove(trailLine);
+  if (trailPoints.length < 2) return;
+
+  const geo = new THREE.BufferGeometry().setFromPoints(trailPoints);
+  const mat = new THREE.LineBasicMaterial({
+    color: 0x00ff41, transparent: true, opacity: 0.4
+  });
+  trailLine = new THREE.Line(geo, mat);
+  scene.add(trailLine);
+}
+
+// ═══════════════════════════════════════════
+//  PHYSICS UPDATE
+// ═══════════════════════════════════════════
+const GRAVITY = 9.81;
+const DRAG = 0.965;
+const ROT_DRAG = 0.85;
+
+function updatePhysics(dt) {
+  if (!SIM.armed || SIM.paused) return;
+
+  // Speeds realistas para dron tipo DJI Mini — más velocidad y respuesta ágil
+  const modes = { 'P-GPS': { thr: 1.2, rot: 1.0, sp: 38 },
+                  'A-ATTI': { thr: 1.4, rot: 1.2, sp: 60 },
+                  'S-SPORT': { thr: 2.8, rot: 1.5, sp: 130 } };
+  const mc = modes[SIM.flightMode] || modes['P-GPS'];
+
+  // Detectar si hay input de throttle activo (teclado o joystick)
+  const thrKeyUp   = KEYS['arrowup'];
+  const thrKeyDown = KEYS['arrowdown'];
+  const joystickThrottleActive = SIM._jsThrottleActive; // set by joystick
+
+  // Keyboard throttle input
+  if (thrKeyUp)   SIM.input.throttle = Math.min(SIM.input.throttle + 0.02, 1);
+  if (thrKeyDown) SIM.input.throttle = Math.max(SIM.input.throttle - 0.02, -0.5);
+
+  // ALTITUDE HOLD: si no hay input de throttle Y el dron está en el aire, mantener altura
+  const groundH0 = getTerrainHeight(SIM.pos.x, SIM.pos.z);
+  const inAir = SIM.pos.y > groundH0 + 0.5;
+  const hasThrottleInput = thrKeyUp || thrKeyDown || joystickThrottleActive;
+
+  if (!hasThrottleInput && inAir && SIM.flightMode !== 'A-ATTI') {
+    // Controlador proporcional de altitud — compensa gravedad exactamente
+    const altError = SIM.altHold - SIM.pos.y;
+    const correction = altError * 4.0 - SIM.vel.y * 2.5;
+    const holdThrust = GRAVITY + correction;
+    // Aplicar corrección directa sobre velocidad vertical
+    SIM.vel.y += (holdThrust - GRAVITY) * dt;
+    SIM.vel.y *= 0.97;
+    SIM.throttlePct = 50 + altError * 2;
+  } else {
+    // Actualizar altHold al soltar
+    if (!hasThrottleInput) SIM.altHold = SIM.pos.y;
+    const thrNorm2 = Math.max(SIM.input.throttle, 0);
+    const thrustUp = thrNorm2 * GRAVITY * 1.9 * mc.thr;
+    SIM.vel.y += (thrustUp - GRAVITY) * dt;
+    SIM.vel.y *= 0.96;
+    SIM.throttlePct = thrNorm2 * 100;
+    // Actualizar altHold continuamente mientras hay input
+    SIM.altHold = SIM.pos.y;
+  }
+
+  if (KEYS['e']) SIM.input.yaw = -0.9;
+  else if (KEYS['q']) SIM.input.yaw = 0.9;
+  else SIM.input.yaw *= 0.8;
+
+  if (KEYS['w']) SIM.input.pitch = -0.85 * mc.rot;
+  else if (KEYS['s']) SIM.input.pitch = 0.85 * mc.rot;
+  else SIM.input.pitch *= 0.82;
+
+  // A = inclinar/mover IZQUIERDA · D = inclinar/mover DERECHA (roll corregido)
+  if (KEYS['a']) SIM.input.roll = 0.85 * mc.rot;
+  else if (KEYS['d']) SIM.input.roll = -0.85 * mc.rot;
+  else SIM.input.roll *= 0.82;
+
+  const thrNorm = Math.max(SIM.input.throttle, 0);
+
+  // Target attitude from pitch/roll inputs — ángulos más pronunciados y respuesta rápida
+  const targetPitch = SIM.input.pitch * 42 * (Math.PI / 180);
+  const targetRoll  = SIM.input.roll  * 42 * (Math.PI / 180);
+  SIM.rot.pitch += (targetPitch - SIM.rot.pitch) * 0.20;
+  SIM.rot.roll  += (targetRoll  - SIM.rot.roll)  * 0.20;
+
+  // Yaw más ágil
+  SIM.rot.yaw += SIM.input.yaw * 2.4 * dt * mc.rot;
+  SIM.heading = ((SIM.rot.yaw * 180 / Math.PI) % 360 + 360) % 360;
+
+  // Thrust vector (pitched/rolled drone)
+  // Convención: a yaw=0 el FRENTE del dron mira hacia -Z (igual que la cámara,
+  // que persigue desde +Z detrás). Vector adelante F=(sinYaw,-cosYaw),
+  // vector derecha R=(cosYaw, sinYaw). Inclinarse adelante -> avanza por F.
+  // Inclinarse a la derecha -> se desplaza por R.
+  const sinYaw = Math.sin(SIM.rot.yaw);
+  const cosYaw = Math.cos(SIM.rot.yaw);
+  const sinPitch = Math.sin(SIM.rot.pitch);
+
+  const fwd = -sinPitch * mc.sp;           // + = inclinado hacia adelante -> avanza
+  const sde = -SIM.rot.roll * mc.sp * 1.8; // CORREGIDO: inclinarse derecha = mover derecha
+
+  // Velocidades horizontales — proyectadas sobre F (adelante) y R (derecha)
+  SIM.vel.x += (sinYaw * fwd + cosYaw * sde + SIM.wind.x) * dt;
+  SIM.vel.z += (-cosYaw * fwd + sinYaw * sde + SIM.wind.z) * dt;
+
+  // Drag horizontal
+  SIM.vel.x *= DRAG;
+  SIM.vel.z *= DRAG;
+
+  // Position
+  SIM.pos.x += SIM.vel.x * dt;
+  SIM.pos.y += SIM.vel.y * dt;
+  SIM.pos.z += SIM.vel.z * dt;
+
+  // Ground collision
+  const groundH = getTerrainHeight(SIM.pos.x, SIM.pos.z);
+  if (SIM.pos.y < groundH + 0.3) {
+    SIM.pos.y = groundH + 0.3;
+    SIM.vel.y = Math.max(SIM.vel.y, 0);
+    if (thrNorm < 0.05) {
+      SIM.vel.x *= 0.7; SIM.vel.z *= 0.7;
+    }
+  }
+
+  // Clamp world bounds
+  SIM.pos.x = Math.max(-280, Math.min(280, SIM.pos.x));
+  SIM.pos.z = Math.max(-280, Math.min(280, SIM.pos.z));
+
+  // RTH logic
+  if (SIM.rthActive) {
+    const dx = SIM.homePos.x - SIM.pos.x;
+    const dz = SIM.homePos.z - SIM.pos.z;
+    const dist = Math.sqrt(dx * dx + dz * dz);
+    if (SIM.pos.y < 15) SIM.vel.y += 0.5 * dt;
+    if (dist > 2) {
+      const spd = 5;
+      SIM.vel.x += (dx / dist) * spd * dt;
+      SIM.vel.z += (dz / dist) * spd * dt;
+    } else if (SIM.pos.y > groundH + 0.5) {
+      SIM.vel.y -= 2 * dt;
+    } else {
+      SIM.rthActive = false;
+      showStatus('RTH COMPLETE — LANDED');
+    }
+  }
+
+  // Derived stats
+  SIM.altitude = SIM.pos.y - groundH;
+  SIM.hSpeed = Math.sqrt(SIM.vel.x * SIM.vel.x + SIM.vel.z * SIM.vel.z);
+  SIM.vSpeed = SIM.vel.y;
+  SIM.rpmCurrent = thrNorm * 8500 + (thrNorm > 0 ? 1200 : 0);
+
+  // Distance tracking
+  const dx2 = SIM.pos.x - SIM.lastPos.x, dz2 = SIM.pos.z - SIM.lastPos.z;
+  SIM.totalDist += Math.sqrt(dx2 * dx2 + dz2 * dz2);
+  SIM.lastPos = { x: SIM.pos.x, z: SIM.pos.z };
+
+  // Battery drain
+  SIM.battery = Math.max(0, SIM.battery - (0.002 + thrNorm * 0.008) * dt);
+  SIM.voltage = 21.0 + (SIM.battery / 100) * 5.8;
+  SIM.flightTime += dt;
+}
+
+// ═══════════════════════════════════════════
+//  DRONE MESH UPDATE
+// ═══════════════════════════════════════════
+function updateDroneMesh() {
+  if (!droneMesh) return;
+
+  droneMesh.position.set(SIM.pos.x, SIM.pos.y, SIM.pos.z);
+  droneMesh.rotation.order = 'YXZ';
+  droneMesh.rotation.y = SIM.rot.yaw;
+  droneMesh.rotation.x = SIM.rot.pitch;
+  droneMesh.rotation.z = SIM.rot.roll;
+
+  // Rotor spin — velocidad más realista (más RPM visibles)
+  const rpm = SIM.rpmCurrent;
+  const rotSpeed = (rpm / 100) * Math.PI * 2 * 0.022;
+  rotorMeshes.forEach((r, i) => {
+    const motorIdx = Math.floor(i / 2);
+    const dir = motorIdx % 2 === 0 ? 1 : -1;
+    r.rotation.y += rotSpeed * dir;
+    if (r.userData.disc) {
+      // disco de blur más visible a altas RPM
+      r.userData.disc.material.opacity = Math.min(rpm / 7500 * 0.70, 0.70);
+    }
+  });
+
+  // Gimbal seguimiento suave de cámara
+  const gimbalGroup = droneMesh.userData.gimbalGroup;
+  if (gimbalGroup) {
+    gimbalGroup.rotation.x = SIM.gimbalAngle * (Math.PI / 180);
+  }
+
+  // Shadow
+  if (shadowPlane) {
+    const gh = getTerrainHeight(SIM.pos.x, SIM.pos.z);
+    shadowPlane.position.set(SIM.pos.x, gh + 0.05, SIM.pos.z);
+    const altFade = Math.max(0, 1 - SIM.altitude / 30);
+    shadowPlane.material.opacity = 0.35 * altFade;
+    const sc = 1 + SIM.altitude * 0.1;
+    shadowPlane.scale.set(sc, sc, sc);
+  }
+
+  // Attach sunLight to follow drone roughly
+  sunLight.position.set(SIM.pos.x + 80, SIM.pos.y + 120, SIM.pos.z - 60);
+  sunLight.target.position.set(SIM.pos.x, 0, SIM.pos.z);
+  sunLight.target.updateMatrixWorld();
+}
+
+// ═══════════════════════════════════════════
+//  CAMERA FOLLOW
+// ═══════════════════════════════════════════
+const camOffsetBase = new THREE.Vector3(0, 4.2, 9);
+const camTarget = new THREE.Vector3();
+
+function updateCamera() {
+  // Retroceder un poco la cámara cuanto más rápido vuela el dron (sensación de velocidad)
+  const speedFactor = Math.min(SIM.hSpeed / 40, 1);
+  const camOffset = new THREE.Vector3(
+    camOffsetBase.x,
+    camOffsetBase.y + speedFactor * 1.5,
+    camOffsetBase.z + speedFactor * 5
+  );
+
+  // Rotate offset by drone yaw
+  const yaw = SIM.rot.yaw;
+  const ox = camOffset.x * Math.cos(yaw) - camOffset.z * Math.sin(yaw);
+  const oz = camOffset.x * Math.sin(yaw) + camOffset.z * Math.cos(yaw);
+
+  const targetPos = new THREE.Vector3(
+    SIM.pos.x + ox,
+    SIM.pos.y + camOffset.y,
+    SIM.pos.z + oz
+  );
+
+  camera.position.lerp(targetPos, 0.1);
+  camTarget.lerp(new THREE.Vector3(SIM.pos.x, SIM.pos.y, SIM.pos.z), 0.16);
+  camera.lookAt(camTarget);
+
+  // Campo de visión dinámico — se ensancha ligeramente con la velocidad (sensación de velocidad)
+  const targetFov = 60 + speedFactor * 12;
+  camera.fov += (targetFov - camera.fov) * 0.05;
+  camera.updateProjectionMatrix();
+}
+
+// ═══════════════════════════════════════════
+//  HUD UPDATE
+// ═══════════════════════════════════════════
+let lastHudUpdate = 0;
+
+function updateHUD() {
+  const now = performance.now();
+  if (now - lastHudUpdate < 80) return;
+  lastHudUpdate = now;
+
+  const alt = SIM.altitude.toFixed(1);
+  const asl = (SIM.pos.y).toFixed(1);
+  const hs = SIM.hSpeed.toFixed(1);
+  const vs = SIM.vSpeed.toFixed(1);
+  const hdg = Math.round(SIM.heading);
+  const bat = Math.round(SIM.battery);
+  const dist = Math.round(Math.sqrt(
+    Math.pow(SIM.pos.x - SIM.homePos.x, 2) +
+    Math.pow(SIM.pos.z - SIM.homePos.z, 2)
+  ));
+
+  document.getElementById('hud-alt').innerHTML = alt + '<span style="font-size:9px;opacity:.5">m</span>';
+  document.getElementById('hud-hspd').innerHTML = hs + '<span style="font-size:9px;opacity:.5">m/s</span>';
+  document.getElementById('hud-vspd').innerHTML = vs + '<span style="font-size:9px;opacity:.5">m/s</span>';
+  document.getElementById('hud-dist').innerHTML = dist + '<span style="font-size:9px;opacity:.5">m</span>';
+  document.getElementById('hud-hdg').textContent = hdg.toString().padStart(3, '0') + '°';
+  document.getElementById('hud-batt').textContent = bat + '%';
+
+  // Battery color
+  const batEl = document.getElementById('hud-batt');
+  batEl.style.color = bat > 40 ? 'var(--green)' : bat > 20 ? 'var(--amber)' : 'var(--red)';
+  batEl.style.textShadow = `0 0 6px ${bat > 40 ? 'var(--green)' : bat > 20 ? 'var(--amber)' : 'var(--red)'}`;
+
+  // Side panels
+  document.getElementById('stat-asl').textContent = asl;
+  document.getElementById('stat-agl').textContent = alt;
+  document.getElementById('stat-lat').textContent = (-36.824 + SIM.pos.x * 0.00001).toFixed(4);
+  document.getElementById('stat-lon').textContent = (-73.049 + SIM.pos.z * 0.00001).toFixed(4);
+  document.getElementById('stat-pitch').textContent = (SIM.rot.pitch * 180 / Math.PI).toFixed(1);
+  document.getElementById('stat-roll').textContent  = (SIM.rot.roll  * 180 / Math.PI).toFixed(1);
+  document.getElementById('stat-yaw').textContent   = hdg;
+  document.getElementById('stat-thr').textContent   = Math.round(SIM.throttlePct);
+  document.getElementById('stat-rpm').textContent   = Math.round(SIM.rpmCurrent);
+  document.getElementById('stat-batt').textContent  = bat;
+  document.getElementById('stat-volt').textContent  = SIM.voltage.toFixed(1);
+  document.getElementById('stat-amp').textContent   = (SIM.throttlePct * 0.15).toFixed(1);
+
+  // Battery fill
+  const batFill = document.getElementById('battery-fill');
+  batFill.style.width = bat + '%';
+  batFill.style.background = bat > 40 ? 'linear-gradient(90deg,var(--green-dim),var(--green))'
+    : bat > 20 ? 'linear-gradient(90deg,#cc7700,var(--amber))'
+    : 'linear-gradient(90deg,#990000,var(--red))';
+
+  // Throttle bar
+  document.getElementById('thr-fill').style.height = Math.max(SIM.throttlePct, 0) + '%';
+
+  // Compass
+  document.getElementById('compass-needle').style.transform = `rotate(${SIM.heading}deg)`;
+  document.getElementById('compass-hdg').textContent = `HDG ${hdg.toString().padStart(3, '0')}°`;
+
+  // Minimap
+  drawMinimap();
+
+  // ADI
+  drawADI();
+}
+
+// ═══════════════════════════════════════════
+//  MINIMAP
+// ═══════════════════════════════════════════
+const mmCtx = document.getElementById('minimap-canvas').getContext('2d');
+const MM_SIZE = 140, MM_SCALE = 0.7; // pixels per meter
+
+function drawMinimap() {
+  const ctx = mmCtx;
+  ctx.clearRect(0, 0, MM_SIZE, MM_SIZE);
+  ctx.fillStyle = 'rgba(0,8,0,0.9)';
+  ctx.fillRect(0, 0, MM_SIZE, MM_SIZE);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(0,255,65,0.08)';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i < MM_SIZE; i += 14) {
+    ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, MM_SIZE); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(MM_SIZE, i); ctx.stroke();
+  }
+
+  const cx = MM_SIZE / 2, cy = MM_SIZE / 2;
+
+  // Trail
+  if (SIM.trail.length > 1) {
+    ctx.strokeStyle = 'rgba(0,255,65,0.3)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    SIM.trail.forEach((p, i) => {
+      const tx = cx + (p.x - SIM.pos.x) * MM_SCALE;
+      const ty = cy + (p.z - SIM.pos.z) * MM_SCALE;
+      i === 0 ? ctx.moveTo(tx, ty) : ctx.lineTo(tx, ty);
+    });
+    ctx.stroke();
+  }
+
+  // Home marker
+  const hx = cx + (SIM.homePos.x - SIM.pos.x) * MM_SCALE;
+  const hz = cy + (SIM.homePos.z - SIM.pos.z) * MM_SCALE;
+  ctx.fillStyle = '#00ff41';
+  ctx.beginPath();
+  ctx.moveTo(hx, hz - 5); ctx.lineTo(hx - 3, hz + 3); ctx.lineTo(hx + 3, hz + 3);
+  ctx.closePath(); ctx.fill();
+
+  // Drone (center)
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(SIM.rot.yaw);
+  ctx.fillStyle = '#00ff41';
+  ctx.shadowColor = '#00ff41';
+  ctx.shadowBlur = 6;
+  ctx.beginPath();
+  ctx.moveTo(0, -6); ctx.lineTo(-4, 5); ctx.lineTo(4, 5);
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+
+  // Scale bar
+  ctx.fillStyle = 'rgba(0,255,65,0.4)';
+  ctx.fillRect(8, MM_SIZE - 12, 28, 1);
+  ctx.font = '7px "Share Tech Mono"';
+  ctx.fillText('40m', 8, MM_SIZE - 4);
+}
+
+// ═══════════════════════════════════════════
+//  ADI (Artificial Direction Indicator)
+// ═══════════════════════════════════════════
+const adiCanvas = document.getElementById('adi-canvas');
+const adiCtx = adiCanvas.getContext('2d');
+
+function drawADI() {
+  const ctx = adiCtx;
+  const W = 110, H = 110, cx = W / 2, cy = H / 2, r = 50;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Clip to circle
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.clip();
+
+  // Sky / ground split rotated by roll
+  const roll = SIM.rot.roll;
+  const pitchOffset = SIM.rot.pitch * 80;
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(roll);
+
+  // Sky
+  ctx.fillStyle = SIM.nightMode ? '#050a18' : '#2a7dc9';
+  ctx.fillRect(-r, -r - pitchOffset, r * 2, r);
+
+  // Ground
+  ctx.fillStyle = SIM.nightMode ? '#0a1505' : '#5a8040';
+  ctx.fillRect(-r, -pitchOffset, r * 2, r);
+
+  // Horizon line
+  ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(-r, -pitchOffset); ctx.lineTo(r, -pitchOffset);
+  ctx.stroke();
+
+  // Pitch lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+  ctx.lineWidth = 0.8;
+  [-30, -20, -10, 10, 20, 30].forEach(deg => {
+    const y = -pitchOffset - deg * 2.5;
+    const len = deg % 20 === 0 ? 20 : 12;
+    ctx.beginPath();
+    ctx.moveTo(-len, y); ctx.lineTo(len, y);
+    ctx.stroke();
+  });
+
+  ctx.restore();
+
+  // Fixed aircraft symbol (center)
+  ctx.strokeStyle = '#ffb800';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(cx - 20, cy); ctx.lineTo(cx - 5, cy);
+  ctx.moveTo(cx + 5, cy);  ctx.lineTo(cx + 20, cy);
+  ctx.moveTo(cx, cy - 4);  ctx.lineTo(cx, cy + 4);
+  ctx.stroke();
+
+  ctx.restore();
+
+  // Border ring
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(0,255,65,0.5)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Roll indicator ticks
+  ctx.save();
+  ctx.translate(cx, cy);
+  [0, 30, 60, -30, -60, 90, -90, 180].forEach(deg => {
+    ctx.save();
+    ctx.rotate(deg * Math.PI / 180 - roll);
+    ctx.beginPath();
+    ctx.moveTo(0, -r + 2); ctx.lineTo(0, -r + (deg % 90 === 0 ? 8 : 5));
+    ctx.strokeStyle = 'rgba(0,255,65,0.5)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.restore();
+  });
+  ctx.restore();
+}
+
+// ═══════════════════════════════════════════
+//  JOYSTICK CONTROLS
+// ═══════════════════════════════════════════
+function setupJoystick(elId, knobId, onMove, onRelease) {
+  const el = document.getElementById(elId);
+  const knob = document.getElementById(knobId);
+  let active = false, startX, startY, curX = 0, curY = 0;
+  const MAX = 24;
+
+  function update(cx, cy) {
+    let dx = cx - startX, dy = cy - startY;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    if (len > MAX) { dx *= MAX / len; dy *= MAX / len; }
+    curX = dx; curY = dy;
+    knob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+    onMove(dx / MAX, dy / MAX);
+  }
+
+  function reset() {
+    curX = 0; curY = 0;
+    knob.style.transform = 'translate(-50%,-50%)';
+    onRelease();
+    active = false;
+  }
+
+  el.addEventListener('mousedown', e => {
+    active = true;
+    startX = e.clientX; startY = e.clientY;
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', e => {
+    if (!active) return;
+    update(e.clientX, e.clientY);
+  });
+  window.addEventListener('mouseup', () => { if (active) reset(); });
+
+  el.addEventListener('touchstart', e => {
+    active = true;
+    startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+    e.preventDefault();
+  }, { passive: false });
+  window.addEventListener('touchmove', e => {
+    if (!active) return;
+    update(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: false });
+  window.addEventListener('touchend', () => { if (active) reset(); });
+}
+
+// ═══════════════════════════════════════════
+//  NIGHT TOGGLE
+// ═══════════════════════════════════════════
+let nightT = 0;
+
+function toggleNight() {
+  SIM.nightMode = !SIM.nightMode;
+  document.getElementById('btn-night').textContent = SIM.nightMode ? '◑ NIGHT' : '◑ DAY';
+  document.getElementById('night-overlay').style.opacity = SIM.nightMode ? '1' : '0';
+  showStatus(SIM.nightMode ? 'NIGHT MODE ACTIVATED' : 'DAY MODE ACTIVATED');
+}
+
+function updateNightMode(dt) {
+  const target = SIM.nightMode ? 1 : 0;
+  nightT += (target - nightT) * dt * 0.5;
+
+  scene.fog.color.setRGB(
+    nightT < 0.5 ? 0.53 : 0.01,
+    nightT < 0.5 ? 0.73 - nightT * 0.5 : 0.03,
+    nightT < 0.5 ? 0.8 - nightT * 0.5 : 0.06
+  );
+
+  if (skyDome) {
+    skyDome.material.uniforms.night.value = nightT;
+  }
+
+  sunLight.intensity = Math.max(0.05, 1.2 - nightT * 1.15);
+  ambientLight.intensity = Math.max(0.05, 0.4 - nightT * 0.35);
+  hemiLight.intensity = Math.max(0.05, 0.6 - nightT * 0.55);
+
+  if (stars) stars.material.opacity = nightT * 0.8;
+  if (cityLights) cityLights.visible = nightT > 0.5;
+
+  renderer.toneMappingExposure = Math.max(0.3, 1.0 - nightT * 0.6);
+}
+
+// ═══════════════════════════════════════════
+//  CONTROLS
+// ═══════════════════════════════════════════
+function toggleArm() {
+  SIM.armed = !SIM.armed;
+  document.getElementById('btn-arm').textContent = SIM.armed ? 'DISARM' : 'ARM';
+  document.getElementById('btn-arm').style.color = SIM.armed ? 'var(--green)' : '';
+  showStatus(SIM.armed ? '✓ MOTORS ARMED — READY TO FLY' : 'MOTORS DISARMED');
+  if (!SIM.armed) {
+    SIM.input.throttle = 0;
+    SIM.vel = { x: 0, y: 0, z: 0 };
+    SIM.rpmCurrent = 0;
+  }
+}
+
+function togglePause() {
+  SIM.paused = !SIM.paused;
+  document.getElementById('btn-pause').textContent = SIM.paused ? '▶ RESUME' : '⏸ PAUSE';
+  showStatus(SIM.paused ? 'FLIGHT PAUSED' : 'FLIGHT RESUMED');
+}
+
+function emergencyStop() {
+  SIM.armed = false; SIM.paused = false;
+  SIM.vel = { x: 0, y: 0, z: 0 };
+  SIM.input = { throttle: 0, yaw: 0, pitch: 0, roll: 0 };
+  SIM.rpmCurrent = 0;
+  document.getElementById('btn-arm').textContent = 'ARM';
+  document.getElementById('btn-stop').classList.add('active-btn');
+  setTimeout(() => document.getElementById('btn-stop').classList.remove('active-btn'), 500);
+  showStatus('⚠ EMERGENCY STOP — MOTORS OFF');
+}
+
+function triggerRTH() {
+  if (!SIM.armed) { showStatus('ARM FIRST'); return; }
+  SIM.rthActive = !SIM.rthActive;
+  document.getElementById('btn-rth').textContent = SIM.rthActive ? '⌂ CANCEL RTH' : '⌂ RTH';
+  showStatus(SIM.rthActive ? 'RETURN TO HOME INITIATED' : 'RTH CANCELLED');
+}
+
+function cycleMode() {
+  SIM.modeIdx = (SIM.modeIdx + 1) % SIM.modes.length;
+  SIM.flightMode = SIM.modes[SIM.modeIdx];
+  document.getElementById('btn-mode').textContent = SIM.flightMode;
+  document.getElementById('flight-mode-badge').textContent = SIM.flightMode;
+  showStatus('FLIGHT MODE: ' + SIM.flightMode);
+}
+
+function updateGimbal(v) {
+  SIM.gimbalAngle = parseFloat(v);
+  document.getElementById('gimbal-val').textContent = v + '°';
+}
+
+let statusTimeout;
+function showStatus(msg) {
+  const el = document.getElementById('status-msg');
+  el.textContent = msg;
+  el.style.opacity = '1';
+  clearTimeout(statusTimeout);
+  statusTimeout = setTimeout(() => el.style.opacity = '0', 3000);
+}
+
+// ═══════════════════════════════════════════
+//  TRAIL UPDATE
+// ═══════════════════════════════════════════
+let lastTrail = 0;
+function updateTrailTimer() {
+  const now = performance.now();
+  if (now - lastTrail > 200) {
+    if (SIM.armed && !SIM.paused) {
+      SIM.trail.push({ x: SIM.pos.x, z: SIM.pos.z });
+      if (SIM.trail.length > 100) SIM.trail.shift();
+    }
+    lastTrail = now;
+    updateTrail();
+  }
+}
+
+// ═══════════════════════════════════════════
+//  MAIN LOOP
+// ═══════════════════════════════════════════
+function animate() {
+  requestAnimationFrame(animate);
+  const dt = Math.min(clock.getDelta(), 0.05);
+
+  updatePhysics(dt);
+  updateDroneMesh();
+  updateCamera();
+  updateNightMode(dt);
+  updateTrailTimer();
+  updateHUD();
+  animateBeacons();
+
+  renderer.render(scene, camera);
+}
+
+let beaconPhase = 0;
+function animateBeacons() {
+  beaconPhase += 0.08;
+  const on = Math.sin(beaconPhase) > 0.3;
+  scene.traverse(obj => {
+    if (obj.userData && obj.userData.isBeacon) {
+      obj.material.color.setHex(on ? 0xff2200 : 0x440000);
+      if (obj.userData.beaconLight) obj.userData.beaconLight.intensity = on ? 2.0 : 0;
+    }
+  });
+
+  // Tower proximity warning
+  let nearest = 999;
+  TOWERS.forEach(t => {
+    const dx = SIM.pos.x - t.x, dz = SIM.pos.z - t.z;
+    const d = Math.sqrt(dx * dx + dz * dz);
+    if (d < nearest) nearest = d;
+  });
+  if (nearest < 15) showStatus(`⚠ OBSTACLE ${Math.round(nearest)}m`);
+}
+
+function onResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
+async function init() {
+  const steps = [
+    'INITIALIZANDO ROTORES...',
+    'CARGANDO SISTEMAS METEOROLOGICOS...',
+    'CALIBRANDO SENSORES...',
+    'LISTO PARA VOLAR'
+  ];
+
+  const bar = document.getElementById('load-bar-fill');
+  const txt = document.getElementById('load-text');
+
+  for (let i = 0; i < steps.length; i++) {
+    txt.textContent = steps[i];
+    bar.style.width = ((i + 1) / steps.length * 100) + '%';
+    await new Promise(r => setTimeout(r, 400));
+  }
+
+  initThree();
+
+  // Setup joysticks
+  setupJoystick('js-left', 'js-left-knob',
+    (x, y) => {
+      SIM.input.yaw = x * 0.8;
+      if (Math.abs(y) > 0.05) {
+        SIM._jsThrottleActive = true;
+        SIM.input.throttle = Math.max(-0.5, Math.min(1, SIM.input.throttle - y * 0.04));
+      } else {
+        SIM._jsThrottleActive = false;
+      }
+    },
+    () => { SIM.input.yaw = 0; SIM._jsThrottleActive = false; }
+  );
+
+  setupJoystick('js-right', 'js-right-knob',
+    (x, y) => {
+      SIM.input.pitch = y * 0.85;
+      SIM.input.roll = x * 0.85;
+    },
+    () => { SIM.input.pitch = 0; SIM.input.roll = 0; }
+  );
+
+  // Initial pos
+  SIM.pos.y = getTerrainHeight(0, 0) + 0.3;
+
+  await new Promise(r => setTimeout(r, 300));
+
+  // Hide loading
+  document.getElementById('loading-screen').style.transition = 'opacity 0.6s';
+  document.getElementById('loading-screen').style.opacity = '0';
+  setTimeout(() => document.getElementById('loading-screen').remove(), 700);
+
+  showStatus('SYSTEM READY — PRESS ARM TO FLY');
+  animate();
+}
+
+init();
+</script>
 </body>
 </html>
